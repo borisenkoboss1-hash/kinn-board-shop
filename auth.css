@@ -1,0 +1,483 @@
+/* ============================================================
+   auth.css — стили для страниц регистрации, входа, отзывов и админки
+   ============================================================ */
+
+/* --- Контейнер страницы авторизации: центрируем карточку --- */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px 80px;
+    min-height: 70vh;
+    background: var(--bg-light, #f7f5f2); /* fallback на случай отсутствия переменной */
+}
+
+/* --- Карточка формы: белый фон, скругления, тень --- */
+.auth-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 32px 36px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+/* --- Заголовок формы --- */
+.auth-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* --- Вкладки Register / Login --- */
+.auth-tabs {
+    display: flex;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #eee;
+}
+.auth-tab {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #999;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: 0.2s;
+}
+/* Активная вкладка подсвечивается фирменным оранжевым цветом */
+.auth-tab.active {
+    color: #d97b3f; /* фирменный оранжевый, как в лендинге KINN */
+    border-bottom-color: #d97b3f;
+}
+
+/* --- Группа поля: лейбл + инпут + подсказка/ошибка --- */
+.form-group {
+    margin-bottom: 16px;
+}
+/* Два поля в один ряд (для Имени и Фамилии) */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+@media (max-width: 480px) {
+    .form-row { grid-template-columns: 1fr; } /* на мобильном — друг под другом */
+}
+
+/* --- Лейбл поля --- */
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+}
+/* Звёздочка обязательного поля — красная */
+.required { color: #e74c3c; }
+/* Пометка необязательного поля — серая */
+.optional { color: #999; font-weight: 400; font-size: 0.8rem; }
+
+/* --- Поле ввода --- */
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+.form-input:focus {
+    outline: none;
+    border-color: #d97b3f; /* фирменный оранжевый при фокусе */
+}
+/* Красная рамка у поля с ошибкой */
+.form-input.input-error {
+    border-color: #e74c3c;
+}
+
+/* --- Подсказка под полем (серый текст) --- */
+.field-hint {
+    display: block;
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 4px;
+}
+/* --- Сообщение об ошибке под полем (красный текст) --- */
+.field-error {
+    display: block;
+    font-size: 0.78rem;
+    color: #e74c3c;
+    margin-top: 4px;
+    min-height: 14px; /* резервируем место чтобы форма не "прыгала" */
+}
+
+/* --- Поле с кнопкой-глазом (показать/скрыть пароль) --- */
+.input-eye-wrap {
+    position: relative;
+}
+.input-eye-wrap .form-input {
+    padding-right: 40px; /* место под иконку */
+}
+.eye-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 4px;
+}
+
+/* --- Строка с полем никнейма и кнопкой генерации --- */
+.nickname-row {
+    display: flex;
+    gap: 8px;
+}
+.nickname-row .form-input { flex: 1; }
+
+/* --- Кнопка "Generate" (генерация никнейма / пароля) --- */
+.btn-generate {
+    padding: 10px 14px;
+    background: #f0ece6;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+.btn-generate:hover { background: #e5dfd6; }
+.btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* --- Радио-кнопки выбора режима пароля --- */
+.password-mode {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+}
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+/* --- Полоска индикатора силы пароля --- */
+.strength-bar {
+    height: 5px;
+    background: #eee;
+    border-radius: 3px;
+    margin-top: 8px;
+    overflow: hidden;
+}
+.strength-fill {
+    height: 100%;
+    width: 0;
+    transition: width 0.3s, background 0.3s;
+}
+.strength-label {
+    display: block;
+    font-size: 0.78rem;
+    margin-top: 4px;
+    font-weight: 600;
+}
+
+/* --- Чекбокс согласия с соглашением --- */
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    line-height: 1.4;
+}
+.checkbox-label input[type="checkbox"] {
+    margin-top: 3px;
+    cursor: pointer;
+}
+
+/* --- Ссылка фирменного цвета --- */
+.link-orange {
+    color: #d97b3f;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* --- Основная кнопка (фирменный оранжевый) --- */
+.btn-primary {
+    background: #d97b3f;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+.btn-primary:hover:not(:disabled) { background: #c5692f; }
+/* Неактивная кнопка — серая, курсор "запрещено" */
+.btn-primary:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+.btn-full { width: 100%; }
+
+/* --- Переключение между формами входа/регистрации --- */
+.auth-switch {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+/* ============================================================
+   МОДАЛЬНОЕ ОКНО (соглашение)
+   ============================================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.modal-box {
+    background: #fff;
+    border-radius: 10px;
+    padding: 28px;
+    max-width: 480px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+.modal-content { font-size: 0.9rem; line-height: 1.6; margin: 16px 0; }
+.modal-content ul { padding-left: 20px; margin: 8px 0; }
+
+/* ============================================================
+   УВЕДОМЛЕНИЯ (TOAST)
+   ============================================================ */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    z-index: 2000;
+    animation: toastIn 0.3s;
+}
+@keyframes toastIn {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* --- Ссылка на админку в навигации --- */
+.admin-link {
+    color: #d97b3f !important;
+    font-weight: 700;
+}
+
+/* Активный пункт меню */
+.nav-active {
+    color: #d97b3f !important;
+    font-weight: 700;
+}
+
+/* ============================================================
+   СТРАНИЦА ОТЗЫВОВ — доп. стили
+   ============================================================ */
+
+/* Баннер "Leaving review as: ..." */
+.user-info-banner {
+    background: #f0ece6;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    color: #555;
+}
+
+/* Звёздочный рейтинг — крупные кликабельные звёзды */
+.stars-input {
+    font-size: 2rem;
+    display: flex;
+    gap: 4px;
+}
+.star {
+    color: #ddd; /* пустая звезда */
+    cursor: pointer;
+    transition: color 0.15s, transform 0.1s;
+}
+.star:hover { transform: scale(1.15); }
+/* Закрашенная звезда (активная) — золотая */
+.star.star-active { color: #f5b942; }
+
+/* Большое текстовое поле для отзыва */
+.feedback-textarea {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Счётчик символов отзыва */
+.char-counter {
+    font-size: 0.78rem;
+    color: #999;
+    text-align: right;
+    margin-top: 4px;
+}
+
+/* Карточка одного отзыва в списке */
+.review-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+}
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+.review-stars { color: #f5b942; font-size: 0.95rem; }
+.review-product {
+    font-size: 0.8rem;
+    color: #999;
+    margin-bottom: 6px;
+}
+.review-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 6px;
+}
+.review-date {
+    font-size: 0.75rem;
+    color: #bbb;
+}
+
+/* ============================================================
+   АДМИН-ПАНЕЛЬ — общие стили
+   ============================================================ */
+
+/* Основной контейнер админки — шире чем форма авторизации */
+.admin-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+}
+
+/* Вкладки админки: Products / Reviews / Users */
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid #eee;
+    flex-wrap: wrap;
+}
+.admin-tab {
+    padding: 10px 18px;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #999;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+}
+.admin-tab.active {
+    color: #d97b3f;
+    border-bottom-color: #d97b3f;
+}
+
+/* Таблица товаров/отзывов в админке */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.85rem;
+}
+.admin-table th,
+.admin-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+.admin-table th {
+    background: #f7f5f2;
+    font-weight: 700;
+}
+/* Контейнер таблицы со скроллом на мобильных */
+.table-scroll {
+    overflow-x: auto;
+}
+
+/* Кнопки действий в таблице (Edit / Delete) */
+.btn-small {
+    padding: 5px 10px;
+    font-size: 0.78rem;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    margin-right: 4px;
+}
+.btn-edit   { background: #e8f0fe; color: #1967d2; }
+.btn-delete { background: #fce8e6; color: #d93025; }
+.btn-edit:hover   { background: #d2e3fc; }
+.btn-delete:hover { background: #f6c6c2; }
+
+/* Форма добавления/редактирования товара в админке */
+.admin-form-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+@media (max-width: 600px) {
+    .admin-form-grid { grid-template-columns: 1fr; }
+}
+.admin-form-grid .form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Доступ запрещён (не админ) */
+.access-denied {
+    text-align: center;
+    padding: 60px 20px;
+    color: #e74c3c;
+    font-size: 1.1rem;
+}

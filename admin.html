@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- Адаптивность -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINN — Admin Panel</title>
+    <link rel="stylesheet" href="catalog.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<!-- ===== ШАПКА ===== -->
+<header class="header">
+    <nav class="nav">
+        <ul class="nav-left">
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">SHOP</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">STYLE QUIZ</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">ABOUT US</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">STORIES</li>
+        </ul>
+        <a href="index.html" class="logo"><span>K</span>INN</a>
+        <ul class="nav-right">
+            <li onclick="window.location.href='register.html'" style="cursor:pointer;" title="Аккаунт">👤</li>
+            <li onclick="window.location.href='cart.html'" style="cursor:pointer;" title="Корзина">🛒</li>
+            <li onclick="window.location.href='favorites.html'" style="cursor:pointer;" title="Избранное">♡</li>
+            <li onclick="window.location.href='feedback.html'" style="cursor:pointer;" title="Отзывы">★</li>
+            <!-- На самой админке пункт ADMIN всегда виден (мы уже здесь) -->
+            <li style="color:#d97b3f; font-weight:700;">ADMIN</li>
+        </ul>
+    </nav>
+</header>
+
+<!-- ===== БЛОК: ДОСТУП ЗАПРЕЩЁН (показывается если роль != admin) ===== -->
+<div id="accessDenied" class="access-denied" style="display:none;">
+    <h1>🚫 Access Denied</h1>
+    <p>You must be logged in as an administrator to view this page.</p>
+    <a href="register.html" class="btn-primary" style="display:inline-block; margin-top:16px;">Sign In</a>
+</div>
+
+<!-- ===== ОСНОВНОЙ КОНТЕНТ АДМИНКИ ===== -->
+<main class="admin-page" id="adminContent" style="display:none;">
+
+    <h1 style="margin-bottom:20px;">Admin Panel</h1>
+
+    <!-- Вкладки разделов админки -->
+    <div class="admin-tabs">
+        <button class="admin-tab active" onclick="showAdminTab('products')" id="tabProducts">Products</button>
+        <button class="admin-tab" onclick="showAdminTab('reviews')" id="tabReviews">Reviews</button>
+        <button class="admin-tab" onclick="showAdminTab('users')" id="tabUsers">Users</button>
+    </div>
+
+    <!-- ============================================================
+         РАЗДЕЛ: ТОВАРЫ (Products) — CRUD
+         ============================================================ -->
+    <section id="sectionProducts">
+
+        <!-- --- Форма добавления / редактирования товара --- -->
+        <div class="admin-form-card">
+            <!-- Заголовок формы меняется JS: "Add New Product" / "Edit Product" -->
+            <h2 id="productFormTitle" style="margin-bottom:16px;">Add New Product</h2>
+
+            <!-- Скрытое поле — id товара при редактировании (пусто при добавлении) -->
+            <input type="hidden" id="productId" value="">
+
+            <form id="productForm" class="admin-form-grid" novalidate>
+
+                <!-- Название товара -->
+                <div class="form-group">
+                    <label class="form-label">Name <span class="required">*</span></label>
+                    <input type="text" id="pName" class="form-input"
+                           placeholder="Maple Board – Short"
+                           oninput="validateProductForm()">
+                    <span class="field-error" id="pNameError"></span>
+                </div>
+
+                <!-- Категория — выпадающий список -->
+                <div class="form-group">
+                    <label class="form-label">Category <span class="required">*</span></label>
+                    <select id="pCategory" class="form-input" onchange="validateProductForm()">
+                        <option value="">— Select —</option>
+                        <option value="Cutting Boards">Cutting Boards</option>
+                        <option value="Serving">Serving</option>
+                        <option value="Accessories">Accessories</option>
+                        <option value="Bundles">Bundles</option>
+                    </select>
+                    <span class="field-error" id="pCategoryError"></span>
+                </div>
+
+                <!-- Цена -->
+                <div class="form-group">
+                    <label class="form-label">Price ($) <span class="required">*</span></label>
+                    <input type="number" id="pPrice" class="form-input"
+                           placeholder="98" min="0" step="0.01"
+                           oninput="validateProductForm()">
+                    <span class="field-error" id="pPriceError"></span>
+                </div>
+
+                <!-- Рейтинг -->
+                <div class="form-group">
+                    <label class="form-label">Rating (0–5) <span class="required">*</span></label>
+                    <input type="number" id="pRating" class="form-input"
+                           placeholder="4.8" min="0" max="5" step="0.1"
+                           oninput="validateProductForm()">
+                    <span class="field-error" id="pRatingError"></span>
+                </div>
+
+                <!-- Путь к фото -->
+                <div class="form-group">
+                    <label class="form-label">Photo path <span class="required">*</span></label>
+                    <input type="text" id="pPhoto" class="form-input"
+                           placeholder="images/board-short.jpg"
+                           oninput="validateProductForm()">
+                    <span class="field-error" id="pPhotoError"></span>
+                </div>
+
+                <!-- Чекбоксы: в наличии / новинка -->
+                <div class="form-group">
+                    <label class="form-label">Flags</label>
+                    <label class="checkbox-label" style="margin-bottom:6px;">
+                        <input type="checkbox" id="pInStock" checked>
+                        <span>In Stock</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="pIsNew">
+                        <span>Mark as New</span>
+                    </label>
+                </div>
+
+                <!-- Описание — на всю ширину -->
+                <div class="form-group full-width">
+                    <label class="form-label">Description <span class="required">*</span></label>
+                    <textarea id="pDescription" class="form-input feedback-textarea"
+                              placeholder="Short product description..."
+                              oninput="validateProductForm()"></textarea>
+                    <span class="field-error" id="pDescriptionError"></span>
+                </div>
+
+                <!-- Кнопки управления формой -->
+                <div class="form-group full-width" style="display:flex; gap:10px;">
+                    <!-- Кнопка сохранения — активна только при валидных данных -->
+                    <button type="submit" class="btn-primary" id="btnSaveProduct" disabled>
+                        Add Product
+                    </button>
+                    <!-- Кнопка отмены редактирования (видна только в режиме Edit) -->
+                    <button type="button" class="btn-generate" id="btnCancelEdit"
+                            onclick="cancelEdit()" style="display:none;">
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- --- Таблица всех товаров --- -->
+        <div class="table-scroll">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Rating</th>
+                        <th>Stock</th>
+                        <th>New</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <!-- JS заполняет строки товаров -->
+                <tbody id="productsTableBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         РАЗДЕЛ: ОТЗЫВЫ (Reviews)
+         ============================================================ -->
+    <section id="sectionReviews" style="display:none;">
+
+        <!-- Фильтры: по товару и по пользователю -->
+        <div class="admin-form-card">
+            <div class="admin-form-grid">
+                <!-- Фильтр по товару -->
+                <div class="form-group">
+                    <label class="form-label">Filter by Product</label>
+                    <select id="reviewFilterProduct" class="form-input" onchange="loadAdminReviews()">
+                        <option value="">All products</option>
+                        <!-- Заполняется JS -->
+                    </select>
+                </div>
+                <!-- Фильтр по пользователю -->
+                <div class="form-group">
+                    <label class="form-label">Filter by User</label>
+                    <select id="reviewFilterUser" class="form-input" onchange="loadAdminReviews()">
+                        <option value="">All users</option>
+                        <!-- Заполняется JS -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Таблица отзывов -->
+        <div class="table-scroll">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Product</th>
+                        <th>Rating</th>
+                        <th>Text</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="reviewsTableBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         РАЗДЕЛ: ПОЛЬЗОВАТЕЛИ (Users) — только просмотр
+         ============================================================ -->
+    <section id="sectionUsers" style="display:none;">
+        <div class="table-scroll">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Nickname</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Role</th>
+                        <th>Registered</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<!-- Уведомление -->
+<div class="toast" id="toast" style="display:none;"></div>
+
+<script src="admin.js"></script>
+
+<script src="i18n.js"></script>
+<script src="themeManager.js"></script>
+<script src="userProfile.js"></script>
+<script src="common.js"></script>
+</body>
+</html>

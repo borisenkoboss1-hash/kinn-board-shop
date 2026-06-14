@@ -1,0 +1,454 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Maple Board – Short",
+      "category": "Cutting Boards",
+      "price": 98,
+      "rating": 4.8,
+      "inStock": true,
+      "isNew": false,
+      "description": "Compact everyday cutting board crafted from solid maple.",
+      "photo": "images/board-short.jpg"
+    },
+    {
+      "id": "2",
+      "name": "Maple Board – Long",
+      "category": "Cutting Boards",
+      "price": 125,
+      "rating": 4.9,
+      "inStock": true,
+      "isNew": false,
+      "description": "Extra length for meal prep and carving. A kitchen staple.",
+      "photo": "images/board-long.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Maple Board – Wide",
+      "category": "Cutting Boards",
+      "price": 158,
+      "rating": 4.7,
+      "inStock": true,
+      "isNew": false,
+      "description": "Generously sized board for the serious home cook.",
+      "photo": "images/board-wide.jpg"
+    },
+    {
+      "id": "4",
+      "name": "Walnut Serving Board",
+      "category": "Serving",
+      "price": 145,
+      "rating": 4.9,
+      "inStock": true,
+      "isNew": true,
+      "description": "Dark walnut grain board. Perfect for charcuterie spreads.",
+      "photo": "images/board-long.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Mini Prep Board",
+      "category": "Cutting Boards",
+      "price": 65,
+      "rating": 4.6,
+      "inStock": true,
+      "isNew": false,
+      "description": "Ideal for quick cuts, cheese, and snack prep.",
+      "photo": "images/board-short.jpg"
+    },
+    {
+      "id": "6",
+      "name": "Serving Tray – Maple",
+      "category": "Serving",
+      "price": 89,
+      "rating": 4.7,
+      "inStock": true,
+      "isNew": false,
+      "description": "Elegant tray with grooved handles for easy carrying.",
+      "photo": "images/board-wide.jpg"
+    },
+    {
+      "id": "7",
+      "name": "Bread Board",
+      "category": "Serving",
+      "price": 78,
+      "rating": 4.5,
+      "inStock": false,
+      "isNew": false,
+      "description": "Slotted design catches crumbs beautifully at the table.",
+      "photo": "images/board-long.jpg"
+    },
+    {
+      "id": "8",
+      "name": "Cheese Board Set",
+      "category": "Serving",
+      "price": 195,
+      "rating": 4.9,
+      "inStock": true,
+      "isNew": true,
+      "description": "Includes board, 3 knives, and marble accents.",
+      "photo": "images/board-wide.jpg"
+    },
+    {
+      "id": "9",
+      "name": "Maple Spoon – Small",
+      "category": "Accessories",
+      "price": 32,
+      "rating": 4.4,
+      "inStock": true,
+      "isNew": false,
+      "description": "Hand-turned maple. Perfect for spices and honey.",
+      "photo": "images/board-short.jpg"
+    },
+    {
+      "id": "10",
+      "name": "Maple Spoon – Large",
+      "category": "Accessories",
+      "price": 48,
+      "rating": 4.5,
+      "inStock": true,
+      "isNew": false,
+      "description": "Beautiful serving spoon for salads and grains.",
+      "photo": "images/board-long.jpg"
+    },
+    {
+      "id": "11",
+      "name": "Board Oil & Wax Kit",
+      "category": "Accessories",
+      "price": 38,
+      "rating": 4.6,
+      "inStock": true,
+      "isNew": false,
+      "description": "Keep your boards looking and feeling like new.",
+      "photo": "images/board-short.jpg"
+    },
+    {
+      "id": "12",
+      "name": "Maple Rolling Pin",
+      "category": "Accessories",
+      "price": 72,
+      "rating": 4.8,
+      "inStock": true,
+      "isNew": false,
+      "description": "Smooth, balanced French-style pin. No handles needed.",
+      "photo": "images/board-wide.jpg"
+    },
+    {
+      "id": "13",
+      "name": "Starter Bundle",
+      "category": "Bundles",
+      "price": 175,
+      "rating": 4.9,
+      "inStock": true,
+      "isNew": false,
+      "description": "Short board + spoon + oil kit. The perfect gift set.",
+      "photo": "images/board-short.jpg"
+    },
+    {
+      "id": "14",
+      "name": "Chef's Bundle",
+      "category": "Bundles",
+      "price": 285,
+      "rating": 5,
+      "inStock": true,
+      "isNew": true,
+      "description": "Long board + wide board + rolling pin + care kit.",
+      "photo": "images/board-long.jpg"
+    },
+    {
+      "id": "15",
+      "name": "Table Essentials Set",
+      "category": "Bundles",
+      "price": 320,
+      "rating": 4.8,
+      "inStock": true,
+      "isNew": false,
+      "description": "Serving tray, cheese board, two spoons, and wax kit.",
+      "photo": "images/board-wide.jpg"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "firstName": "Admin",
+      "lastName": "User",
+      "patronymic": "",
+      "phone": "+375291234567",
+      "email": "admin@kinn.com",
+      "password": "Admin@123",
+      "nickname": "admin_kinn",
+      "birthDate": "1990-01-01",
+      "role": "admin",
+      "createdAt": "2024-01-01"
+    },
+    {
+      "id": "2",
+      "firstName": "Anna",
+      "lastName": "Smithh",
+      "patronymic": "Lee",
+      "phone": "+375297654321",
+      "email": "anna@example.com",
+      "password": "User@456",
+      "nickname": "AnnSmi42",
+      "birthDate": "1995-05-15",
+      "role": "buyer",
+      "createdAt": "2024-03-10"
+    },
+    {
+      "id": "3",
+      "firstName": "John",
+      "lastName": "Brown",
+      "patronymic": "",
+      "phone": "+375331112233",
+      "email": "john@example.com",
+      "password": "John@789",
+      "nickname": "JohBro77",
+      "birthDate": "1988-11-20",
+      "role": "buyer",
+      "createdAt": "2024-04-05"
+    },
+    {
+      "firstName": "Anna",
+      "lastName": "Test",
+      "patronymic": "",
+      "phone": "+375 (29) 123-45-67",
+      "email": "anna@test.com",
+      "password": "f^6YYYzuJ8#W",
+      "nickname": "AnTes711",
+      "birthDate": "2005-02-16",
+      "role": "buyer",
+      "createdAt": "2026-06-13",
+      "id": "MWhyiIaAl4s"
+    },
+    {
+      "firstName": "Anna",
+      "lastName": "Test",
+      "patronymic": "",
+      "phone": "+375 (29) 123-45-67",
+      "email": "anna1@test.com",
+      "password": "Test123!",
+      "nickname": "AnnTes481",
+      "birthDate": "2003-06-06",
+      "role": "buyer",
+      "createdAt": "2026-06-13",
+      "id": "pNRViGa"
+    }
+  ],
+  "orders": [
+    {
+      "id": "1",
+      "userId": "2",
+      "items": [
+        {
+          "productId": "1",
+          "name": "Maple Board – Short",
+          "price": 98,
+          "quantity": 1
+        },
+        {
+          "productId": "9",
+          "name": "Maple Spoon – Small",
+          "price": 32,
+          "quantity": 2
+        }
+      ],
+      "total": 162,
+      "status": "delivered",
+      "createdAt": "2024-04-10"
+    },
+    {
+      "id": "2",
+      "userId": "3",
+      "items": [
+        {
+          "productId": "3",
+          "name": "Maple Board – Wide",
+          "price": 158,
+          "quantity": 1
+        }
+      ],
+      "total": 158,
+      "status": "delivered",
+      "createdAt": "2024-04-15"
+    },
+    {
+      "id": "3",
+      "userId": "2",
+      "items": [
+        {
+          "productId": "8",
+          "name": "Cheese Board Set",
+          "price": 195,
+          "quantity": 1
+        }
+      ],
+      "total": 195,
+      "status": "processing",
+      "createdAt": "2024-05-01"
+    },
+    {
+      "userId": "2",
+      "items": [
+        {
+          "productId": "2",
+          "name": "Maple Board – Long",
+          "price": 125,
+          "quantity": 1
+        }
+      ],
+      "total": 125,
+      "status": "processing",
+      "createdAt": "2026-06-13",
+      "id": "FqMEOthjKDM"
+    },
+    {
+      "userId": "2",
+      "items": [
+        {
+          "productId": "2",
+          "name": "Maple Board – Long",
+          "price": 125,
+          "quantity": 1
+        }
+      ],
+      "total": 125,
+      "status": "processing",
+      "createdAt": "2026-06-13",
+      "id": "hoJ4MwVmQmA"
+    }
+  ],
+  "feedback": [
+    {
+      "id": "1",
+      "userId": "2",
+      "productId": "1",
+      "productName": "Maple Board – Short",
+      "nickname": "AnnSmi42",
+      "rating": 5,
+      "text": "Absolutely love this board! Great quality and perfect size for daily use.",
+      "createdAt": "2024-04-20"
+    },
+    {
+      "id": "2",
+      "userId": "3",
+      "productId": "3",
+      "productName": "Maple Board – Wide",
+      "nickname": "JohBro77",
+      "rating": 4,
+      "text": "Really solid board, very spacious. Arrived well-packaged.",
+      "createdAt": "2024-04-22"
+    }
+  ],
+  "favorites": [
+    {
+      "userId": "2",
+      "productId": "3",
+      "name": "Maple Board – Wide",
+      "price": 158,
+      "photo": "images/board-wide.jpg",
+      "category": "Cutting Boards",
+      "rating": 4.7,
+      "id": "1"
+    },
+    {
+      "userId": "2",
+      "productId": "2",
+      "name": "Maple Board – Long",
+      "price": 125,
+      "photo": "images/board-long.jpg",
+      "category": "Cutting Boards",
+      "rating": 4.9,
+      "id": "D6kQCj6"
+    },
+    {
+      "userId": "2",
+      "productId": "5",
+      "name": "Mini Prep Board",
+      "price": 65,
+      "photo": "images/board-short.jpg",
+      "category": "Cutting Boards",
+      "rating": 4.6,
+      "id": "IZb3pDl"
+    },
+    {
+      "userId": "2",
+      "productId": "4",
+      "name": "Walnut Serving Board",
+      "price": 145,
+      "photo": "images/board-long.jpg",
+      "category": "Serving",
+      "rating": 4.9,
+      "id": "if8rlDb"
+    },
+    {
+      "userId": "2",
+      "productId": "1",
+      "name": "Maple Board – Short",
+      "price": 98,
+      "photo": "images/board-short.jpg",
+      "category": "Cutting Boards",
+      "rating": 4.8,
+      "id": "ezwlpTS"
+    },
+    {
+      "userId": "2",
+      "productId": "6",
+      "name": "Serving Tray – Maple",
+      "price": 89,
+      "photo": "images/board-wide.jpg",
+      "category": "Serving",
+      "rating": 4.7,
+      "id": "Mg5EMZR"
+    }
+  ],
+  "cart": [
+    {
+      "productId": "2",
+      "name": "Maple Board – Long",
+      "price": 125,
+      "photo": "images/board-long.jpg",
+      "category": "Cutting Boards",
+      "quantity": 1,
+      "id": "1"
+    },
+    {
+      "productId": "3",
+      "name": "Maple Board – Wide",
+      "price": 158,
+      "photo": "images/board-wide.jpg",
+      "category": "Cutting Boards",
+      "quantity": 1,
+      "id": "2"
+    },
+    {
+      "userId": "2",
+      "productId": "2",
+      "name": "Maple Board – Long",
+      "price": 125,
+      "photo": "images/board-long.jpg",
+      "category": "Cutting Boards",
+      "quantity": 2,
+      "id": "3"
+    },
+    {
+      "userId": "2",
+      "productId": "6",
+      "name": "Serving Tray – Maple",
+      "price": 89,
+      "photo": "images/board-wide.jpg",
+      "category": "Serving",
+      "quantity": 1,
+      "id": "4"
+    },
+    {
+      "userId": "2",
+      "productId": "5",
+      "name": "Mini Prep Board",
+      "price": 65,
+      "photo": "images/board-short.jpg",
+      "category": "Cutting Boards",
+      "quantity": 1,
+      "id": "aJxpPYp"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

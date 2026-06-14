@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINN — Каталог товаров</title>
+    <link rel="stylesheet" href="catalog.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        .pagination { display:flex; gap:8px; justify-content:center; margin:40px 0 0; flex-wrap:wrap; }
+        .page-btn { width:38px; height:38px; border:1px solid #d0d0d0; background:transparent; color:#555; font-size:13px; cursor:pointer; font-family:Arial,sans-serif; transition:all .25s; }
+        .page-btn.active { background:#6d7352; color:#fff; border-color:#6d7352; }
+        .page-btn:hover:not(.active) { background:#f0efe9; }
+        .advanced-filters { max-width:1280px; margin:0 auto 30px; padding:0 40px; display:flex; gap:24px; flex-wrap:wrap; align-items:flex-end; }
+        .filter-group { display:flex; flex-direction:column; gap:6px; }
+        .filter-group label { font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#999; }
+        .filter-group input[type="number"] { width:100px; border:none; border-bottom:1px solid #6d7352; outline:none; font-size:14px; padding:4px 6px; background:transparent; font-family:Arial,sans-serif; color:#333; }
+        .filter-group.checkbox { flex-direction:row; align-items:center; gap:8px; }
+        .filter-group.checkbox label { font-size:12px; letter-spacing:1px; color:#555; text-transform:uppercase; }
+        .filter-group input[type="checkbox"] { width:16px; height:16px; accent-color:#6d7352; cursor:pointer; }
+        .reset-btn { padding:8px 20px; border:1px solid #ccc; background:transparent; color:#888; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; font-family:Arial,sans-serif; transition:all .25s; align-self:flex-end; }
+        .reset-btn:hover { border-color:#6d7352; color:#6d7352; }
+        .card-actions { display:flex; gap:8px; margin-top:12px; }
+        .card-actions button { flex:1; padding:9px 4px; border:1px solid #d0d0d0; background:transparent; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer; font-family:Arial,sans-serif; transition:all .25s; color:#555; }
+        .btn-fav.active { background:#fff3cd; border-color:#c8a951; color:#c8a951; }
+        .card-actions button:hover { background:#6d7352; color:#fff; border-color:#6d7352; }
+        .toast { position:fixed; bottom:30px; right:30px; background:#6d7352; color:#fff; padding:14px 24px; font-size:13px; letter-spacing:1px; text-transform:uppercase; border-radius:2px; opacity:0; pointer-events:none; transition:opacity .4s; z-index:999; }
+        .toast.show { opacity:1; }
+        @media(max-width:768px){ .catalog-grid{ grid-template-columns:repeat(2,1fr)!important; gap:24px 16px; } .advanced-filters,.controls-wrapper{ padding:0 16px; } }
+        @media(max-width:480px){ .catalog-grid{ grid-template-columns:1fr!important; } }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <nav class="nav">
+        <ul class="nav-left">
+            <li>SHOP</li>
+            <li>STYLE QUIZ</li>
+            <li>ABOUT US</li>
+            <li>STORIES</li>
+        </ul>
+        <a href="index.html" class="logo"><span>K</span>INN</a>
+        <ul class="nav-right">
+            <li onclick="window.location.href='register.html'" style="cursor:pointer;" title="Аккаунт">👤</li>
+            <li onclick="window.location.href='cart.html'" style="cursor:pointer;" title="Корзина">🛒</li>
+            <li onclick="window.location.href='favorites.html'" style="cursor:pointer;" title="Избранное">♡</li>
+            <li onclick="window.location.href='feedback.html'" style="cursor:pointer;" title="Отзывы">★</li>
+            <!-- Кнопка "Admin Panel" — видна только администратору, управляется через JS -->
+            <li id="adminLink" style="display:none; cursor:pointer; color:#d97b3f; font-weight:700;"
+                onclick="window.location.href='admin.html'">ADMIN</li>
+        </ul>
+    </nav>
+</header>
+
+<section class="catalog-hero">
+    <h1 data-i18n="catalog-title">Maple Collection</h1>
+    <p data-i18n="catalog-subtitle">Thoughtful objects for everyday living</p>
+</section>
+
+<div class="controls-wrapper">
+    <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search products..."/>
+    </div>
+    <div class="filter-sort-row">
+        <div class="categories">
+            <span>Filter:</span>
+            <button class="cat-btn active" data-cat="all">All</button>
+            <button class="cat-btn" data-cat="Cutting Boards">Cutting Boards</button>
+            <button class="cat-btn" data-cat="Serving">Serving</button>
+            <button class="cat-btn" data-cat="Accessories">Accessories</button>
+            <button class="cat-btn" data-cat="Bundles">Bundles</button>
+        </div>
+        <div class="sort-control">
+            <label for="sortSelect">Sort by:</label>
+            <select id="sortSelect">
+                <option value="default">Featured</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+                <option value="name_asc">Name: A–Z</option>
+                <option value="name_desc">Name: Z–A</option>
+                <option value="rating_desc">Highest Rated</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="advanced-filters">
+    <div class="filter-group">
+        <label for="priceMin">Price from ($)</label>
+        <input type="number" id="priceMin" placeholder="0" min="0">
+    </div>
+    <div class="filter-group">
+        <label for="priceMax">Price to ($)</label>
+        <input type="number" id="priceMax" placeholder="500" min="0">
+    </div>
+    <div class="filter-group">
+        <label for="ratingMin">Min rating</label>
+        <input type="number" id="ratingMin" placeholder="0" min="0" max="5" step="0.1">
+    </div>
+    <div class="filter-group checkbox">
+        <input type="checkbox" id="inStockOnly">
+        <label for="inStockOnly">In Stock Only</label>
+    </div>
+    <button class="reset-btn" id="resetBtn">✕ Reset All</button>
+</div>
+
+<section class="catalog-section">
+    <p class="catalog-count" id="catalogCount"></p>
+    <div class="catalog-grid" id="catalogGrid"></div>
+    <div class="pagination" id="pagination"></div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <p>© 2021&nbsp;&nbsp;Kinn Home</p>
+            <span class="footer-divider"></span>
+            <p>Need to get in touch? Email us</p>
+            <p>at <a href="mailto:hello@kinnhome.co">hello@kinnhome.co</a></p>
+        </div>
+        <div class="footer-col">
+            <h2>EXPLORE</h2>
+            <ul>
+                <li><a href="#">SHOP</a></li>
+                <li><a href="#">STYLE QUIZ</a></li>
+                <li><a href="#">ABOUT US</a></li>
+                <li><a href="#">STORIES</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h2>HELP</h2>
+            <ul>
+                <li><a href="#">FAQS + SHIPPING</a></li>
+                <li><a href="#">CONTACT</a></li>
+                <li><a href="#">TERMS</a></li>
+                <li><a href="#">TRADE</a></li>
+            </ul>
+        </div>
+        <div class="footer-social">
+            <img src="images/facebook.png" alt="Facebook">
+            <img src="images/Pinterest.png" alt="Pinterest">
+            <img src="images/Instagram.png" alt="Instagram">
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* =================================================================
+       БАЗОВЫЙ URL JSON SERVER
+       Все запросы идут на http://localhost:8000
+    ================================================================= */
+    const API_URL = "http://localhost:8000";
+
+    /* =================================================================
+       ФУНКЦИЯ-ПОМОЩНИК ПЕРЕВОДА ДЛЯ ДИНАМИЧЕСКОГО КОНТЕНТА (лаб.№10)
+       Карточки товаров создаются через JS (innerHTML), поэтому
+       статичный data-i18n им не подходит — текст нужно подставлять
+       сразу на правильном языке при генерации шаблона.
+       t(key) возвращает перевод для ТЕКУЩЕГО языка (window.lang),
+       используя словарь i18Obj из i18n.js
+    ================================================================= */
+    function t(key) {
+        const currentLang = window.lang || 'en';
+        return (i18Obj[currentLang] && i18Obj[currentLang][key]) || key;
+    }
+
+    /* =================================================================
+       ОБЪЕКТ СОСТОЯНИЯ
+       Хранит текущие параметры фильтрации, поиска, сортировки и пагинации.
+       При любом изменении вызывается loadProducts().
+    ================================================================= */
+    const state = {
+        page: 1,           // текущая страница (пагинация на клиенте)
+        limit: 6,          // товаров на странице
+        search: "",        // строка поиска
+        category: "all",   // выбранная категория
+        sort: "default",   // сортировка
+        priceMin: "",      // минимальная цена
+        priceMax: "",      // максимальная цена
+        ratingMin: "",     // минимальный рейтинг
+        inStockOnly: false // только в наличии
+    };
+
+    /* =================================================================
+       ФУНКЦИЯ: buildQueryString
+       Строит строку query-параметров для запроса к серверу.
+       Фильтрация, поиск и сортировка выполняются НА СЕРВЕРЕ.
+       Пагинация — на клиенте (slice), т.к. json-server v1+ не поддерживает _page.
+    ================================================================= */
+    function buildQueryString() {
+        const params = new URLSearchParams();
+
+        // ?q=текст — полнотекстовый поиск по всем строковым полям
+        if (state.search.trim() !== "") {
+            params.append("q", state.search.trim());
+        }
+
+        // ?category=Serving — точный фильтр по категории
+        if (state.category !== "all") {
+            params.append("category", state.category);
+        }
+
+        // ?price_gte=50 — цена от (greater than or equal)
+        if (state.priceMin !== "") params.append("price_gte", state.priceMin);
+        // ?price_lte=200 — цена до (less than or equal)
+        if (state.priceMax !== "") params.append("price_lte", state.priceMax);
+
+        // ?rating_gte=4.5 — рейтинг от
+        if (state.ratingMin !== "") params.append("rating_gte", state.ratingMin);
+
+        // ?inStock=true — только в наличии
+        if (state.inStockOnly) params.append("inStock", "true");
+
+        // ?_sort=price&_order=asc — сортировка на сервере
+        if (state.sort !== "default") {
+            const parts = state.sort.split("_");
+            const order = parts[parts.length - 1];        // asc или desc
+            const field = parts.slice(0, -1).join("_");   // имя поля
+            params.append("_sort", field);
+            params.append("_order", order);
+        }
+
+        return params.toString();
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: loadProducts
+       Делает fetch-запрос к серверу и отображает результат.
+       Пагинация реализована на клиенте через Array.slice().
+    ================================================================= */
+    async function loadProducts() {
+        document.getElementById("catalogGrid").innerHTML =
+            '<p style="color:#bbb;letter-spacing:2px;text-transform:uppercase;font-size:13px;">Loading...</p>';
+
+        const query = buildQueryString();
+        const url = `${API_URL}/products${query ? "?" + query : ""}`;
+
+        try {
+            /*
+               fetch() — отправляет HTTP GET запрос.
+               await — ждём ответа от сервера.
+            */
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            /*
+               json-server v1+ возвращает:
+               - без пагинации: просто массив [...]
+               - с _page: объект { data: [...], items: N, ... }
+               Мы не передаём _page, поэтому получаем массив.
+            */
+            const raw = await response.json();
+
+            // Если пришёл массив — берём его напрямую, если объект — берём поле data
+            const allProducts = Array.isArray(raw) ? raw : (raw.data || []);
+
+            // --- КЛИЕНТСКАЯ ПАГИНАЦИЯ ---
+            // Считаем общее количество и берём нужный срез через slice()
+            const total = allProducts.length;
+            const start = (state.page - 1) * state.limit;  // начальный индекс
+            const end = start + state.limit;                 // конечный индекс
+            const products = allProducts.slice(start, end);  // срез нужной страницы
+
+            renderCatalog(products, total);
+
+        } catch (error) {
+            console.error("Ошибка:", error);
+            document.getElementById("catalogGrid").innerHTML = `
+                <div class="empty-state">
+                    <p>⚠️</p>
+                    <p>Не удалось подключиться к серверу.<br>Убедитесь, что JSON Server запущен на порту 3000.</p>
+                </div>`;
+            document.getElementById("catalogCount").textContent = "";
+            document.getElementById("pagination").innerHTML = "";
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: renderCatalog
+       Отрисовывает карточки товаров и пагинацию.
+    ================================================================= */
+    async function renderCatalog(products, totalCount) {
+        const grid = document.getElementById("catalogGrid");
+        const countEl = document.getElementById("catalogCount");
+        grid.innerHTML = "";
+
+        if (products.length === 0) {
+            grid.innerHTML = `<div class="empty-state"><p>🌿</p><p>No products found for your criteria</p></div>`;
+            countEl.textContent = "0 products";
+            document.getElementById("pagination").innerHTML = "";
+            return;
+        }
+
+        countEl.textContent = `${totalCount} product${totalCount !== 1 ? "s" : ""}`;
+
+        // Загружаем ID избранных товаров чтобы подсветить кнопки
+        const favIds = await getFavoriteIds();
+
+        products.forEach(product => grid.appendChild(createCard(product, favIds)));
+
+        renderPagination(totalCount);
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: getFavoriteIds
+       Возвращает массив productId из коллекции favorites.
+    ================================================================= */
+    async function getFavoriteIds() {
+    try {
+        const user = getCurrentUser();
+        if (!user) return [];
+        
+        const res = await fetch(`${API_URL}/favorites`);
+        const raw = await res.json();
+        const allFavs = Array.isArray(raw) ? raw : (raw.data || []);
+        
+        // Возвращаем ТОЛЬКО свои избранные товары
+        const myFavs = allFavs.filter(item => item.userId === user.id);
+        return myFavs.map(f => f.productId);
+    } catch { 
+        return []; 
+    }
+}
+
+    /* =================================================================
+       ФУНКЦИЯ: createCard
+       Создаёт DOM-элемент карточки товара.
+    ================================================================= */
+    function createCard(product, favIds = []) {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        const stars = Math.round(product.rating);
+        const starsHTML = "★".repeat(stars) + "☆".repeat(5 - stars);
+        const isFav = favIds.includes(product.id);
+
+        card.innerHTML = `
+            <div class="card-img-wrap">
+                <img src="${product.photo}" alt="${product.name}">
+                ${product.isNew ? '<span class="card-badge">New</span>' : ""}
+                ${!product.inStock ? '<span class="card-badge" style="background:#999;">Out of Stock</span>' : ""}
+            </div>
+            <div class="card-body">
+                <p class="card-category">${product.category}</p>
+                <p class="card-name">${product.name}</p>
+                <p class="card-desc">${product.description}</p>
+                <div class="card-footer">
+                    <p class="card-price">$${product.price.toFixed(2)}</p>
+                    <p class="card-rating"><span>${starsHTML}</span>${product.rating.toFixed(1)}</p>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-fav ${isFav ? "active" : ""}" data-id="${product.id}">
+                        ${isFav ? "♥ " + t('btn-fav-saved') : "♡ " + t('btn-fav-add')}
+                    </button>
+                    <button class="btn-cart" data-id="${product.id}" ${!product.inStock ? "disabled" : ""}>
+                        🛒 ${t('btn-add-cart')}
+                    </button>
+                </div>
+            </div>`;
+
+        card.querySelector(".btn-fav").addEventListener("click", () => toggleFavourite(product));
+        card.querySelector(".btn-cart").addEventListener("click", () => addToCart(product));
+        return card;
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: renderPagination
+       Рисует кнопки страниц.
+    ================================================================= */
+    function renderPagination(totalCount) {
+        const container = document.getElementById("pagination");
+        container.innerHTML = "";
+        const totalPages = Math.ceil(totalCount / state.limit);
+        if (totalPages <= 1) return;
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement("button");
+            btn.className = "page-btn" + (i === state.page ? " active" : "");
+            btn.textContent = i;
+            btn.addEventListener("click", () => {
+                state.page = i;
+                loadProducts();
+                document.querySelector(".catalog-section").scrollIntoView({ behavior: "smooth" });
+            });
+            container.appendChild(btn);
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: toggleFavourite
+       Добавляет/удаляет товар из избранного.
+       GET — проверить, POST — добавить, DELETE — удалить.
+    ================================================================= */
+async function toggleFavourite(product) {
+    // ========== ПРОВЕРКА ПОЛЬЗОВАТЕЛЯ ==========
+    const user = getCurrentUser();
+    if (!user) {
+        showToast("Please login first to add to favorites");
+        setTimeout(() => { window.location.href = "register.html"; }, 1500);
+        return;
+    }
+    // ===========================================
+    
+    try {
+        // Загружаем ВСЕ товары из избранного
+        const res = await fetch(`${API_URL}/favorites`);
+        const raw = await res.json();
+        const allFavs = Array.isArray(raw) ? raw : (raw.data || []);
+        
+        // Ищем товар с таким же productId И userId
+        const existing = allFavs.find(item => item.userId === user.id && item.productId === product.id);
+
+        if (existing) {
+            // Уже в избранном — удаляем (DELETE /favorites/:id)
+            await fetch(`${API_URL}/favorites/${existing.id}`, { method: "DELETE" });
+            showToast("Removed from favourites");
+        } else {
+            // Нет в избранном — добавляем с userId
+            await fetch(`${API_URL}/favorites`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: user.id,        // ← ГЛАВНОЕ: добавляем userId!
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    photo: product.photo,
+                    category: product.category,
+                    rating: product.rating
+                })
+            });
+            showToast("Added to favourites ♥");
+        }
+        
+        // Перезагружаем карточки, чтобы обновить состояние кнопки
+        loadProducts();
+        
+        // Обновляем счётчик в шапке (если есть функция)
+        if (typeof updateFavoritesCounter === 'function') updateFavoritesCounter();
+        
+    } catch (error) {
+        console.error("Ошибка избранного:", error);
+        showToast("Error updating favorites");
+    }
+}
+
+    /* =================================================================
+       ФУНКЦИЯ: addToCart
+       Добавляет товар в корзину или увеличивает количество.
+       GET — проверить, POST — добавить, PATCH — обновить количество.
+    ================================================================= */
+    async function addToCart(product) {
+    // ========== ДОБАВИТЬ ПРОВЕРКУ ПОЛЬЗОВАТЕЛЯ ==========
+    const user = getCurrentUser();
+    if (!user) {
+        showToast("Please login first to add items to cart");
+        setTimeout(() => { window.location.href = "register.html"; }, 1500);
+        return;
+    }
+    // ===================================================
+    
+    try {
+        // Проверяем, есть ли уже такой товар у ЭТОГО пользователя
+        const checkRes = await fetch(`${API_URL}/cart`);
+        const raw = await checkRes.json();
+        const allCart = Array.isArray(raw) ? raw : (raw.data || []);
+        
+        // Ищем товар с таким же productId И userId
+        const existing = allCart.filter(item => item.userId === user.id).find(item => item.productId === product.id);
+
+        if (existing) {
+            // Уже в корзине — увеличиваем quantity
+            const newQty = existing.quantity + 1;
+            await fetch(`${API_URL}/cart/${existing.id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ quantity: newQty })
+            });
+            showToast(`Quantity updated (×${newQty})`);
+        } else {
+            // Нет в корзине — добавляем с userId
+            await fetch(`${API_URL}/cart`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: user.id,        // ← ГЛАВНОЕ: добавляем userId!
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    photo: product.photo,
+                    category: product.category,
+                    quantity: 1
+                })
+            });
+            showToast("Added to cart 🛒");
+        }
+        
+        // Обновляем счётчик в шапке (если есть функция)
+        if (typeof updateCartCounter === 'function') updateCartCounter();
+        
+    } catch (error) {
+        console.error("Ошибка корзины:", error);
+        showToast("Error adding to cart");
+    }
+}
+
+    /* =================================================================
+       ФУНКЦИЯ: showToast — всплывающее уведомление на 2 секунды
+    ================================================================= */
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2000);
+    }
+
+    /* =================================================================
+       ОБРАБОТЧИКИ СОБЫТИЙ
+    ================================================================= */
+
+    // Поиск — при каждом вводе символа
+    document.getElementById("searchInput").addEventListener("input", function () {
+        state.search = this.value;
+        state.page = 1;
+        loadProducts();
+    });
+
+    // Сортировка
+    document.getElementById("sortSelect").addEventListener("change", function () {
+        state.sort = this.value;
+        state.page = 1;
+        loadProducts();
+    });
+
+    // Кнопки категорий
+    document.querySelectorAll(".cat-btn").forEach(btn => {
+        btn.addEventListener("click", function () {
+            document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+            this.classList.add("active");
+            state.category = this.dataset.cat;
+            state.page = 1;
+            loadProducts();
+        });
+    });
+
+    // Диапазон цен
+    document.getElementById("priceMin").addEventListener("change", function () {
+        state.priceMin = this.value;
+        state.page = 1;
+        loadProducts();
+    });
+    document.getElementById("priceMax").addEventListener("change", function () {
+        state.priceMax = this.value;
+        state.page = 1;
+        loadProducts();
+    });
+
+    // Рейтинг
+    document.getElementById("ratingMin").addEventListener("change", function () {
+        state.ratingMin = this.value;
+        state.page = 1;
+        loadProducts();
+    });
+
+    // Наличие
+    document.getElementById("inStockOnly").addEventListener("change", function () {
+        state.inStockOnly = this.checked;
+        state.page = 1;
+        loadProducts();
+    });
+
+    // Сброс всех фильтров
+    document.getElementById("resetBtn").addEventListener("click", function () {
+        state.search = ""; state.category = "all"; state.sort = "default";
+        state.priceMin = ""; state.priceMax = ""; state.ratingMin = "";
+        state.inStockOnly = false; state.page = 1;
+
+        document.getElementById("searchInput").value = "";
+        document.getElementById("sortSelect").value = "default";
+        document.getElementById("priceMin").value = "";
+        document.getElementById("priceMax").value = "";
+        document.getElementById("ratingMin").value = "";
+        document.getElementById("inStockOnly").checked = false;
+        document.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("active"));
+        document.querySelector('.cat-btn[data-cat="all"]').classList.add("active");
+
+        loadProducts();
+    });
+
+    /* =================================================================
+       ИНИЦИАЛИЗАЦИЯ — загружаем товары при открытии страницы
+    ================================================================= */
+    loadProducts();
+
+    /* =================================================================
+       ПЕРЕРИСОВКА КАРТОЧЕК ПРИ СМЕНЕ ЯЗЫКА (лаб.№10)
+       Событие 'languageChanged' создаётся в themeManager.js
+       при клике на кнопку EN/RU. Карточки товаров сгенерированы
+       через innerHTML и не обновляются автоматически через data-i18n —
+       поэтому просто перезагружаем (перерисовываем) их с новым языком.
+    ================================================================= */
+    document.addEventListener('languageChanged', () => {
+        loadProducts(); // повторная загрузка + перерисовка карточек с новым языком
+    });
+
+    // ====== Показ кнопки ADMIN для администратора (лаб.№8) ======
+    // Проверяем роль текущего пользователя из localStorage
+    (function() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (currentUser && currentUser.role === 'admin') {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) adminLink.style.display = 'inline';
+        }
+    })();
+</script>
+
+<script src="i18n.js"></script>
+<script src="themeManager.js"></script>
+<script src="userProfile.js"></script>
+<script src="common.js"></script>
+</body>
+</html>

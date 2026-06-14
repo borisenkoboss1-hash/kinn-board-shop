@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- viewport — адаптивность на мобильных устройствах -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINN — Избранное</title>
+    <!-- Подключаем общие стили каталога -->
+    <link rel="stylesheet" href="catalog.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        /* ============================
+           УВЕДОМЛЕНИЕ (toast)
+           ============================ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #6d7352;
+            color: #fff;
+            padding: 14px 24px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 2px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 999;
+        }
+
+        .toast.show { opacity: 1; }
+
+        /* ============================
+           КНОПКИ НА КАРТОЧКЕ ИЗБРАННОГО
+           ============================ */
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .card-actions button {
+            flex: 1;
+            padding: 9px 4px;
+            border: 1px solid #d0d0d0;
+            background: transparent;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            transition: all 0.25s ease;
+            color: #555;
+        }
+
+        .card-actions button:hover {
+            background: #6d7352;
+            color: #fff;
+            border-color: #6d7352;
+        }
+
+        /* Кнопка удалить — красноватый hover */
+        .btn-remove:hover {
+            background: #c0392b !important;
+            border-color: #c0392b !important;
+        }
+
+        /* Адаптивная сетка */
+        @media (max-width: 768px) {
+            .catalog-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 24px 16px; }
+        }
+        @media (max-width: 480px) {
+            .catalog-grid { grid-template-columns: 1fr !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     ШАПКА САЙТА
+     ============================================================ -->
+<header class="header">
+    <nav class="nav">
+        <ul class="nav-left">
+            <li>SHOP</li>
+            <li>STYLE QUIZ</li>
+            <li>ABOUT US</li>
+            <li>STORIES</li>
+        </ul>
+        <a href="index.html" class="logo"><span>K</span>INN</a>
+        <ul class="nav-right">
+            <li onclick="window.location.href='register.html'" style="cursor:pointer;" title="Аккаунт">👤</li>
+            <li onclick="window.location.href='cart.html'" style="cursor:pointer;" title="Корзина">🛒</li>
+            <li style="color:#c8a951;font-weight:bold;" title="Избранное">♥</li>
+            <li onclick="window.location.href='feedback.html'" style="cursor:pointer;" title="Отзывы">★</li>
+            <li id="adminLink" style="display:none; cursor:pointer; color:#d97b3f; font-weight:700;"
+                onclick="window.location.href='admin.html'">ADMIN</li>
+        </ul>
+    </nav>
+</header>
+
+<!-- ============================================================
+     ЗАГОЛОВОК СТРАНИЦЫ
+     ============================================================ -->
+<section class="catalog-hero">
+    <h1>Favourites</h1>
+    <p>Items you've saved for later</p>
+</section>
+
+<!-- ============================================================
+     СПИСОК ИЗБРАННЫХ ТОВАРОВ
+     ============================================================ -->
+<section class="catalog-section">
+    <!-- Счётчик — заполняется через JS -->
+    <p class="catalog-count" id="favCount"></p>
+
+    <!-- Сетка карточек — заполняется через JS -->
+    <div class="catalog-grid" id="favGrid"></div>
+</section>
+
+<!-- Всплывающее уведомление -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     ПОДВАЛ САЙТА
+     ============================================================ -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <p>© 2021&nbsp;&nbsp;Kinn Home</p>
+            <span class="footer-divider"></span>
+            <p>at <a href="mailto:hello@kinnhome.co">hello@kinnhome.co</a></p>
+        </div>
+        <div class="footer-col">
+            <h2>EXPLORE</h2>
+            <ul>
+                <li><a href="catalog.html">SHOP</a></li>
+                <li><a href="#">ABOUT US</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h2>HELP</h2>
+            <ul>
+                <li><a href="#">FAQS + SHIPPING</a></li>
+                <li><a href="#">CONTACT</a></li>
+            </ul>
+        </div>
+        <div class="footer-social">
+            <img src="images/facebook.png" alt="Facebook">
+            <img src="images/Pinterest.png" alt="Pinterest">
+            <img src="images/Instagram.png" alt="Instagram">
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* =================================================================
+       БАЗОВЫЙ URL JSON SERVER
+    ================================================================= */
+    const API_URL = "http://127.0.0.1:8000";
+
+    /* =================================================================
+       ФУНКЦИЯ: loadFavourites
+       Запрашивает все записи из коллекции /favorites и отображает их.
+       HTTP-метод: GET /favorites
+    ================================================================= */
+    async function loadFavourites() {
+        const grid = document.getElementById("favGrid");
+        const countEl = document.getElementById("favCount");
+
+        grid.innerHTML = '<p style="color:#bbb;letter-spacing:2px;text-transform:uppercase;font-size:13px;">Loading...</p>';
+
+        try {
+            /*
+               GET /favorites — получаем все сохранённые избранные товары.
+               Это простой fetch без дополнительных параметров.
+            */
+            const response = await fetch(`${API_URL}/favorites`);
+
+            // Проверяем успешность ответа
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+            // Парсим JSON в массив
+           const allItems = await response.json();
+const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+const items = allItems.filter(item => item.userId === user?.id);
+            grid.innerHTML = ""; // очищаем сетку
+
+            // Если избранное пустое — показываем сообщение
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <p>♡</p>
+                        <p>Your favourites list is empty.<br>
+                        <a href="catalog.html" style="color:#6d7352;">Browse the catalog →</a></p>
+                    </div>`;
+                countEl.textContent = "0 items";
+                return;
+            }
+
+            countEl.textContent = `${items.length} saved item${items.length !== 1 ? "s" : ""}`;
+
+            // Рендерим карточку для каждого сохранённого товара
+            items.forEach(item => grid.appendChild(createFavCard(item)));
+
+        } catch (error) {
+            console.error("Ошибка загрузки избранного:", error);
+            grid.innerHTML = `<div class="empty-state"><p>⚠️</p><p>Не удалось загрузить данные.<br>Убедитесь, что JSON Server запущен.</p></div>`;
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: createFavCard
+       Создаёт DOM-карточку для одного элемента из избранного.
+       item — объект из коллекции favorites (содержит id записи в favorites,
+       не id товара; id товара — item.productId).
+    ================================================================= */
+    function createFavCard(item) {
+        const card = document.createElement("div");
+        card.className = "product-card";
+
+        // Звёзды рейтинга
+        const stars = Math.round(item.rating || 0);
+        const starsHTML = "★".repeat(stars) + "☆".repeat(5 - stars);
+
+        card.innerHTML = `
+            <div class="card-img-wrap">
+                <img src="${item.photo}" alt="${item.name}">
+            </div>
+            <div class="card-body">
+                <p class="card-category">${item.category}</p>
+                <p class="card-name">${item.name}</p>
+                <div class="card-footer">
+                    <p class="card-price">$${Number(item.price).toFixed(2)}</p>
+                    <p class="card-rating"><span>${starsHTML}</span>${Number(item.rating).toFixed(1)}</p>
+                </div>
+                <div class="card-actions">
+                    <!-- Кнопка удаления: data-id хранит id записи в favorites (не id товара!) -->
+                    <button class="btn-remove" data-id="${item.id}">✕ Remove</button>
+                    <!-- Кнопка перехода в корзину — добавляет товар через /cart -->
+                    <button class="btn-cart" data-id="${item.id}" data-product-id="${item.productId}">🛒 Add to Cart</button>
+                </div>
+            </div>
+        `;
+
+        // Обработчик удаления из избранного
+        card.querySelector(".btn-remove").addEventListener("click", () => removeFromFav(item.id));
+
+        // Обработчик добавления в корзину прямо со страницы избранного
+        card.querySelector(".btn-cart").addEventListener("click", () => addToCartFromFav(item));
+
+        return card;
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: removeFromFav
+       Удаляет запись из коллекции favorites по её id.
+       HTTP-метод: DELETE /favorites/:id
+    ================================================================= */
+    async function removeFromFav(favId) {
+        try {
+            /*
+               DELETE /favorites/3 — удаляет запись с id=3 из коллекции favorites.
+               После успешного удаления перезагружаем список.
+            */
+            await fetch(`${API_URL}/favorites/${favId}`, { method: "DELETE" });
+            showToast("Removed from favourites");
+            loadFavourites(); // обновляем страницу
+        } catch (error) {
+            console.error("Ошибка удаления:", error);
+            showToast("Ошибка соединения");
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: addToCartFromFav
+       Добавляет товар в корзину прямо со страницы избранного.
+       Логика та же, что и в catalog.html.
+    ================================================================= */
+    async function addToCartFromFav(item) {
+        try {
+            // Проверяем, есть ли уже в корзине
+            const checkRes = await fetch(`${API_URL}/cart?productId=${item.productId}`);
+            const existing = await checkRes.json();
+
+            if (existing.length > 0) {
+                // Увеличиваем количество через PATCH
+                const newQty = existing[0].quantity + 1;
+                await fetch(`${API_URL}/cart/${existing[0].id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ quantity: newQty })
+                });
+                showToast(`Количество обновлено (×${newQty})`);
+            } else {
+                // Добавляем новую запись через POST
+               const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+await fetch(`${API_URL}/cart`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+        userId: user.id,        // ← ЭТА СТРОЧКА НОВАЯ
+        productId: item.productId,
+        name: item.name,
+        price: item.price,
+        photo: item.photo,
+        category: item.category,
+        quantity: 1
+    })
+});
+                showToast("Added to cart 🛒");
+            }
+        } catch (error) {
+            console.error("Ошибка добавления в корзину:", error);
+            showToast("Ошибка соединения");
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: showToast — всплывающее уведомление
+    ================================================================= */
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2000);
+    }
+
+    /* =================================================================
+       ИНИЦИАЛИЗАЦИЯ — загружаем избранное при открытии страницы
+    ================================================================= */
+    loadFavourites();
+
+    // ====== Показ кнопки ADMIN для администратора (лаб.№8) ======
+    // Проверяем роль текущего пользователя из localStorage
+    (function() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (currentUser && currentUser.role === 'admin') {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) adminLink.style.display = 'inline';
+        }
+    })();
+</script>
+
+<script src="i18n.js"></script>
+<script src="themeManager.js"></script>
+<script src="userProfile.js"></script>
+<script src="common.js"></script>
+</body>
+</html>

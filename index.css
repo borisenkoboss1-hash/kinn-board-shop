@@ -1,0 +1,663 @@
+/* ============================================================
+   index.css — стили главной страницы 
+   ============================================================ */
+
+/* ============================================================
+   ОБЩИЕ ЗАГОЛОВКИ СЕКЦИЙ
+   ============================================================ */
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 8px;
+    color: #333;
+}
+.section-subtitle {
+    text-align: center;
+    color: #888;
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+}
+
+/* Счётчики корзины/избранного в шапке (для анимации лаб.№9) */
+.nav-counter {
+    display: inline-block;
+    min-width: 16px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #d97b3f;
+}
+
+
+/* ============================================================
+   1. SWIPER-СЛАЙДЕР (главный баннер)
+   ============================================================ */
+.hero-slider-section {
+    width: 100%;
+}
+
+/* Сам Swiper-контейнер на всю ширину экрана */
+.hero-swiper {
+    width: 100%;
+    height: 70vh;
+    min-height: 420px;
+}
+
+/* Каждый слайд — фоновое изображение во весь экран */
+.hero-slide {
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    /* Затемняющий градиент слева направо для читаемости текста */
+    position: relative;
+}
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.05) 60%);
+}
+
+/* Текстовый блок поверх затемнения */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    max-width: 480px;
+    margin-left: 8%;
+}
+.hero-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    margin-bottom: 12px;
+    line-height: 1.1;
+}
+.hero-content p {
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+    opacity: 0.95;
+}
+
+/* Кнопка переиспользует стиль .btn-primary из auth.css, но крупнее на главной */
+.hero-content .btn-primary {
+    display: inline-block;
+    text-decoration: none;
+    padding: 14px 28px;
+    font-size: 1rem;
+}
+
+/* Цвет стрелок и точек Swiper — фирменный оранжевый */
+.hero-swiper .swiper-button-next,
+.hero-swiper .swiper-button-prev {
+    color: #fff;
+}
+.hero-swiper .swiper-pagination-bullet-active {
+    background: #d97b3f;
+}
+
+@media (max-width: 768px) {
+    .hero-content { margin-left: 5%; max-width: 90%; }
+    .hero-content h1 { font-size: 2rem; }
+    .hero-swiper { height: 56vh; min-height: 340px; }
+}
+
+
+/* ============================================================
+   2. МЕДИАГАЛЕРЕЯ СО ЗВУКОМ
+   ============================================================ */
+.gallery-section {
+    padding: 60px 5%;
+    background: #fff;
+}
+
+.gallery-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+/* Контейнер для большого изображения */
+.gallery-display {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    aspect-ratio: 16/9;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+/* Само изображение — плавный переход через opacity (требование "smooth transition") */
+.gallery-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.4s ease; /* плавность смены картинки */
+}
+/* Класс добавляется на момент смены картинки — изображение временно прозрачнее */
+.gallery-img.fading {
+    opacity: 0.2;
+}
+
+/* Индикатор играет/пауза в углу изображения */
+.gallery-status {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(4px);
+}
+/* Когда играет звук — добавляется класс .playing, меняем цвет индикатора */
+.gallery-status.playing {
+    background: rgba(217,123,63,0.85); /* фирменный оранжевый */
+}
+
+/* Блок управления под изображением */
+.gallery-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Кнопки-иконки (минимум 2 интерактивных элемента по заданию) */
+.gallery-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    background: #f7f5f2;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 14px 22px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #555;
+    transition: border-color 0.2s, transform 0.15s;
+}
+.gallery-btn:hover {
+    transform: translateY(-3px);
+}
+/* Активная кнопка (последняя нажатая) подсвечивается рамкой */
+.gallery-btn.active {
+    border-color: #d97b3f;
+    color: #d97b3f;
+}
+.gallery-btn-icon {
+    font-size: 1.8rem;
+}
+
+/* Регулятор громкости */
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.volume-control input[type="range"] {
+    accent-color: #d97b3f; /* красим ползунок в фирменный цвет */
+    cursor: pointer;
+}
+
+
+/* ============================================================
+   3. ВИДЕО-СЕКЦИЯ
+   ============================================================ */
+.video-section {
+    padding: 60px 5%;
+    background: #f7f5f2;
+}
+
+.video-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    aspect-ratio: 16/9;
+    position: relative;
+    background: #000;
+}
+
+/* Превью-картинка с кнопкой Play */
+.video-poster {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+.video-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s ease;
+}
+/* Затемнение превью для контраста с кнопкой */
+.video-poster::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+}
+
+/* Большая круглая кнопка Play по центру */
+.play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    font-size: 1.8rem;
+    color: #d97b3f;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+}
+.play-btn:hover {
+    transform: translate(-50%, -50%) scale(1.08);
+    background: #fff;
+}
+
+/* Само видео занимает весь контейнер когда видно */
+#storyVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* ============================================================
+   4. PARALLAX-СЕКЦИЯ
+   ============================================================ */
+.parallax-section {
+    position: relative;
+    height: 70vh;
+    min-height: 480px;
+    overflow: hidden; /* слои не должны вылезать за пределы секции */
+}
+
+/* Общий стиль для всех слоёв параллакса */
+.parallax-layer {
+    position: absolute;
+    inset: 0;
+    will-change: transform; /* подсказка браузеру для оптимизации анимации */
+}
+
+/* Слой 1: фон — занимает чуть больше высоты секции,
+   чтобы при сдвиге не появлялись пустые края */
+.parallax-bg {
+    background-size: cover;
+    background-position: center;
+    height: 120%;
+    top: -10%;
+}
+/* Затемнение фона для читаемости текста */
+.parallax-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+}
+
+/* Слой 2: средний — изображение доски справа */
+.parallax-mid {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8%;
+}
+.parallax-img-mid {
+    width: 280px;
+    max-width: 35vw;
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+
+/* Слой 3: передний — маленькая доска слева (движется в обратную сторону) */
+.parallax-front {
+    display: flex;
+    align-items: flex-end;
+    padding-left: 6%;
+    padding-bottom: 8%;
+}
+.parallax-img-front {
+    width: 160px;
+    max-width: 22vw;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Слой 4: текстовый контент по центру */
+.parallax-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #fff;
+    padding: 0 20px;
+}
+.parallax-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+.parallax-content p {
+    font-size: 1.1rem;
+    max-width: 480px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+@media (max-width: 768px) {
+    .parallax-img-mid   { width: 180px; }
+    .parallax-img-front { width: 110px; }
+    .parallax-content h2 { font-size: 1.7rem; }
+}
+
+
+/* ============================================================
+   5. СТАТИСТИКА (анимированные счётчики)
+   ============================================================ */
+.stats-section {
+    padding: 60px 5%;
+    background: #6d7352; /* тёмно-зелёный фирменный цвет лендинга */
+    color: #fff;
+}
+.stats-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    text-align: center;
+}
+.stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    font-weight: 700;
+}
+.stat-label {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+@media (max-width: 600px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+
+/* ============================================================
+   6. FEATURED PRODUCTS + МОДАЛКА ТОВАРА
+   ============================================================ */
+.featured-section {
+    padding: 60px 5%;
+    background: #fff;
+}
+.featured-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+@media (max-width: 900px) {
+    .featured-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+    .featured-grid { grid-template-columns: 1fr; }
+}
+
+/* Карточка товара на главной — кликабельна, открывает модалку */
+.featured-card {
+    cursor: pointer;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f7f5f2;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.featured-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.featured-card img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+}
+.featured-card-body {
+    padding: 12px 14px;
+}
+.featured-card-body p:first-child {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.featured-card-body .price {
+    color: #d97b3f;
+    font-weight: 700;
+}
+
+/* Модальное окно деталей товара — расширенная версия .modal-box из auth.css */
+.product-modal-box {
+    max-width: 640px;
+    width: 92%;
+    padding: 0;
+    overflow: hidden;
+}
+.product-modal-box .modal-close {
+    z-index: 5;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+}
+/* Внутренняя структура модалки заполняется JS, но базовые классы стилизуем тут */
+.pm-image img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    display: block;
+}
+.pm-body {
+    padding: 24px;
+}
+.pm-body h2 {
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 8px;
+}
+.pm-body .pm-price {
+    font-size: 1.4rem;
+    color: #d97b3f;
+    font-weight: 700;
+    margin: 8px 0;
+}
+.pm-body .pm-desc {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+
+/* ============================================================
+   ГЕОКАРТА В ПОДВАЛЕ
+   ============================================================ */
+.map-section {
+    max-width: 1100px;
+    margin: 40px auto 0;
+    padding: 0 5%;
+}
+
+
+
+
+
+/* ============================================================
+   7. УМЕНЬШЕННАЯ МОДАЛКА ТОВАРА (ИСПРАВЛЕНИЕ)
+   ============================================================ */
+
+/* Уменьшаем размер модального окна */
+.product-modal-box {
+    max-width: 500px !important;
+    width: 90% !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    padding: 0 !important;
+}
+
+/* Уменьшаем изображение в модалке */
+.product-modal-box .pm-image img {
+    max-height: 250px !important;
+    object-fit: cover !important;
+}
+
+/* Компактное содержимое */
+#productModalContent {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Для горизонтального расположения на больших экранах */
+@media (min-width: 600px) {
+    #productModalContent {
+        flex-direction: row !important;
+        align-items: flex-start !important;
+    }
+    
+    .product-modal-box .pm-image {
+        flex: 1 !important;
+        min-width: 150px !important;
+    }
+    
+    .product-modal-box .pm-body {
+        flex: 1.5 !important;
+        padding: 20px !important;
+    }
+}
+
+/* Компактные отступы в теле модалки */
+.product-modal-box .pm-body {
+    padding: 16px !important;
+}
+
+.product-modal-box .pm-body h2 {
+    font-size: 1.3rem !important;
+    margin-top: 0 !important;
+}
+
+.product-modal-box .pm-price {
+    font-size: 1.2rem !important;
+}
+
+.product-modal-box .pm-desc {
+    font-size: 0.85rem !important;
+}
+
+/* Кнопка закрытия */
+.product-modal-box .modal-close {
+    top: 8px !important;
+    right: 8px !important;
+}
+
+
+/* ============================================================
+   8. ПОДВАЛ - ЗЕЛЕНЫЙ ТЕКСТ
+   ============================================================ */
+
+/* Весь текст в подвале */
+.footer,
+.footer * {
+    color: #2e7d32 !important;  /* темно-зеленый */
+}
+
+/* Ссылки в подвале */
+.footer a {
+    color: #4caf50 !important;  /* светло-зеленый для ссылок */
+    text-decoration: none;
+}
+
+.footer a:hover {
+    color: #81c784 !important;  /* очень светлый зеленый при наведении */
+    text-decoration: underline;
+}
+
+
+/* ============================================================
+   9. ШАПКА - ЗЕЛЕНЫЙ ТЕКСТ
+   ============================================================ */
+
+/* Весь текст в шапке */
+.header,
+.header * {
+    color: #2e7d32 !important;  /* темно-зеленый, как в подвале */
+}
+
+/* Логотип KINN */
+.header .logo {
+    color: #2e7d32 !important;
+}
+
+/* Кнопки переключения языка (EN/RU) */
+.lang-btn {
+    background: transparent !important;
+    color: #2e7d32 !important;
+}
+
+.lang-btn.active {
+    color: #4caf50 !important;
+    font-weight: bold;
+}
+
+/* Иконки в шапке (👤, 🛒, ♡, ★) */
+.nav-right li {
+    color: #2e7d32 !important;
+}
+
+/* Счетчики корзины/избранного */
+.nav-counter {
+    color: #4caf50 !important;
+    font-weight: bold;
+}
+
+/* Кнопка Log Out */
+.logout-btn {
+    color: #2e7d32 !important;
+}
+
+.logout-btn:hover {
+    color: #4caf50 !important;
+}
+
+/* Ссылки в навигации */
+.nav-left a {
+    color: #2e7d32 !important;
+}
+
+.nav-left a:hover {
+    color: #4caf50 !important;
+}

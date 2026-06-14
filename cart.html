@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- viewport — адаптивность на мобильных -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINN — Корзина</title>
+    <link rel="stylesheet" href="catalog.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="theme.css">
+    <style>
+        /* ============================
+           УВЕДОМЛЕНИЕ (toast)
+           ============================ */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #6d7352;
+            color: #fff;
+            padding: 14px 24px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-radius: 2px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            z-index: 999;
+        }
+        .toast.show { opacity: 1; }
+
+        /* ============================
+           ТАБЛИЦА КОРЗИНЫ
+           ============================ */
+
+        /* Обёртка — ограничиваем ширину и центрируем */
+        .cart-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 40px 60px;
+        }
+
+        /* Одна строка товара в корзине */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Фото товара в корзине — маленькое, квадратное */
+        .cart-item img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            background: #f5f4f0;
+            flex-shrink: 0; /* не сжимается */
+        }
+
+        /* Текстовая информация о товаре */
+        .cart-item-info {
+            flex: 1; /* занимает всё доступное место */
+        }
+
+        .cart-item-name {
+            font-size: 15px;
+            color: #222;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-cat {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #bbb;
+            margin-bottom: 8px;
+        }
+
+        /* Цена за единицу товара */
+        .cart-item-price {
+            font-size: 16px;
+            color: #6d7352;
+            font-weight: 500;
+        }
+
+        /* ============================
+           УПРАВЛЕНИЕ КОЛИЧЕСТВОМ
+           ============================ */
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            border: 1px solid #d0d0d0;
+        }
+
+        /* Кнопки − и + */
+        .qty-btn {
+            width: 34px;
+            height: 34px;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            cursor: pointer;
+            color: #555;
+            font-family: Arial, sans-serif;
+            transition: background 0.2s;
+        }
+
+        .qty-btn:hover { background: #f0efe9; }
+
+        /* Поле с числом */
+        .qty-value {
+            width: 40px;
+            text-align: center;
+            font-size: 14px;
+            border: none;
+            border-left: 1px solid #d0d0d0;
+            border-right: 1px solid #d0d0d0;
+            outline: none;
+            height: 34px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        /* ============================
+           КНОПКА УДАЛЕНИЯ
+           ============================ */
+        .btn-remove-cart {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: transparent;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            color: #888;
+            transition: all 0.25s ease;
+        }
+
+        .btn-remove-cart:hover {
+            background: #c0392b;
+            color: #fff;
+            border-color: #c0392b;
+        }
+
+        /* ============================
+           ИТОГОВАЯ СУММА
+           ============================ */
+        .cart-summary {
+            margin-top: 40px;
+            border-top: 2px solid #6d7352;
+            padding-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end; /* прижимаем к правому краю */
+            gap: 16px;
+        }
+
+        /* Строка «Итого: $XXX» */
+        .cart-total {
+            font-size: 22px;
+            color: #333;
+            letter-spacing: 1px;
+        }
+
+        .cart-total span {
+            color: #6d7352;
+            font-weight: 500;
+            margin-left: 12px;
+        }
+
+        /* Кнопка оформления заказа */
+        .checkout-btn {
+            padding: 16px 48px;
+            background: #6d7352;
+            color: #fff;
+            border: none;
+            font-size: 14px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            transition: opacity 0.25s ease;
+        }
+
+        .checkout-btn:hover { opacity: 0.85; }
+
+        /* ============================
+           МОДАЛЬНОЕ ОКНО — успех заказа
+           ============================ */
+
+        /* Затемнённый фон поверх страницы */
+        .modal-overlay {
+            position: fixed;
+            inset: 0; /* top:0 right:0 bottom:0 left:0 */
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Само модальное окно */
+        .modal {
+            background: #fff;
+            padding: 60px 70px;
+            text-align: center;
+            max-width: 440px;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        /* Показываем модальное окно */
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-overlay.show .modal {
+            transform: translateY(0);
+        }
+
+        .modal h2 {
+            font-size: 26px;
+            font-weight: 300;
+            color: #6d7352;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: #888;
+            letter-spacing: 1px;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        /* Кнопка закрытия модального окна */
+        .modal-close {
+            padding: 12px 36px;
+            background: #6d7352;
+            color: #fff;
+            border: none;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+        }
+
+        /* ============================
+           АДАПТИВНОСТЬ
+           ============================ */
+        @media (max-width: 600px) {
+            .cart-item { flex-wrap: wrap; }
+            .cart-wrapper { padding: 0 16px 40px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     ШАПКА САЙТА
+     ============================================================ -->
+<header class="header">
+    <nav class="nav">
+        <ul class="nav-left">
+            <li>SHOP</li>
+            <li>STYLE QUIZ</li>
+            <li>ABOUT US</li>
+            <li>STORIES</li>
+        </ul>
+        <a href="index.html" class="logo"><span>K</span>INN</a>
+        <ul class="nav-right">
+            <li onclick="window.location.href='register.html'" style="cursor:pointer;" title="Аккаунт">👤</li>
+            <!-- Иконка корзины активна (выделена) -->
+            <li style="color:#6d7352;font-weight:bold;" title="Корзина">🛒</li>
+            <li onclick="window.location.href='favorites.html'" style="cursor:pointer;" title="Избранное">♡</li>
+            <li onclick="window.location.href='feedback.html'" style="cursor:pointer;" title="Отзывы">★</li>
+            <li id="adminLink" style="display:none; cursor:pointer; color:#d97b3f; font-weight:700;"
+                onclick="window.location.href='admin.html'">ADMIN</li>
+        </ul>
+    </nav>
+</header>
+
+<!-- ============================================================
+     ЗАГОЛОВОК СТРАНИЦЫ
+     ============================================================ -->
+<section class="catalog-hero">
+    <h1>Shopping Cart</h1>
+    <p>Review your items before checkout</p>
+</section>
+
+<!-- ============================================================
+     СОДЕРЖИМОЕ КОРЗИНЫ
+     ============================================================ -->
+<div class="cart-wrapper">
+    <!-- Счётчик позиций в корзине — заполняется через JS -->
+    <p class="catalog-count" id="cartCount"></p>
+
+    <!-- Список товаров — заполняется через JS -->
+    <div id="cartItems"></div>
+
+    <!-- Итоговая сумма и кнопка оформления — заполняется через JS -->
+    <div id="cartSummary"></div>
+</div>
+
+<!-- ============================================================
+     МОДАЛЬНОЕ ОКНО: успешный заказ
+     Скрыто по умолчанию (opacity:0, pointer-events:none)
+     ============================================================ -->
+<div class="modal-overlay" id="successModal">
+    <div class="modal">
+        <h2>Order Placed!</h2>
+        <p>Thank you for your purchase.<br>Your items will be delivered within 3–5 business days.</p>
+        <button class="modal-close" id="modalCloseBtn">Continue Shopping</button>
+    </div>
+</div>
+
+<!-- Всплывающее уведомление -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     ПОДВАЛ САЙТА
+     ============================================================ -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <p>© 2021&nbsp;&nbsp;Kinn Home</p>
+            <span class="footer-divider"></span>
+            <p>at <a href="mailto:hello@kinnhome.co">hello@kinnhome.co</a></p>
+        </div>
+        <div class="footer-col">
+            <h2>EXPLORE</h2>
+            <ul>
+                <li><a href="catalog.html">SHOP</a></li>
+                <li><a href="#">ABOUT US</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h2>HELP</h2>
+            <ul>
+                <li><a href="#">FAQS + SHIPPING</a></li>
+                <li><a href="#">CONTACT</a></li>
+            </ul>
+        </div>
+        <div class="footer-social">
+            <img src="images/facebook.png" alt="Facebook">
+            <img src="images/Pinterest.png" alt="Pinterest">
+            <img src="images/Instagram.png" alt="Instagram">
+        </div>
+    </div>
+</footer>
+
+<script>
+    /* =================================================================
+       БАЗОВЫЙ URL JSON SERVER
+    ================================================================= */
+    const API_URL = "http://127.0.0.1:8000";
+
+    /* =================================================================
+       ФУНКЦИЯ: loadCart
+       Загружает все товары из коллекции /cart и отображает их.
+       HTTP-метод: GET /cart
+    ================================================================= */
+    async function loadCart() {
+        const itemsEl = document.getElementById("cartItems");
+        const summaryEl = document.getElementById("cartSummary");
+        const countEl = document.getElementById("cartCount");
+
+        itemsEl.innerHTML = '<p style="color:#bbb;letter-spacing:2px;text-transform:uppercase;font-size:13px;">Loading...</p>';
+        summaryEl.innerHTML = "";
+
+        try {
+            /*
+               GET /cart — получаем все позиции корзины.
+               Это простой запрос без query-параметров.
+            */
+            const response = await fetch(`${API_URL}/cart`);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const allItems = await response.json();
+const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+const items = allItems.filter(item => item.userId === user?.id);
+
+            itemsEl.innerHTML = ""; // очищаем
+
+            // Корзина пустая
+            if (items.length === 0) {
+                itemsEl.innerHTML = `
+                    <div class="empty-state">
+                        <p>🛒</p>
+                        <p>Your cart is empty.<br>
+                        <a href="catalog.html" style="color:#6d7352;">Browse the catalog →</a></p>
+                    </div>`;
+                countEl.textContent = "0 items";
+                return;
+            }
+
+            countEl.textContent = `${items.length} item${items.length !== 1 ? "s" : ""}`;
+
+            // Рендерим строку для каждой позиции корзины
+            items.forEach(item => itemsEl.appendChild(createCartRow(item)));
+
+            // Считаем и рендерим итоговую сумму
+            renderSummary(items);
+
+        } catch (error) {
+            console.error("Ошибка загрузки корзины:", error);
+            itemsEl.innerHTML = `<div class="empty-state"><p>⚠️</p><p>Не удалось загрузить данные.<br>Убедитесь, что JSON Server запущен.</p></div>`;
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: createCartRow
+       Создаёт одну строку (row) для товара в корзине.
+       item — объект из коллекции cart.
+    ================================================================= */
+    function createCartRow(item) {
+        const row = document.createElement("div");
+        row.className = "cart-item";
+
+        row.innerHTML = `
+            <img src="${item.photo}" alt="${item.name}">
+            <div class="cart-item-info">
+                <p class="cart-item-cat">${item.category}</p>
+                <p class="cart-item-name">${item.name}</p>
+                <p class="cart-item-price">$${Number(item.price).toFixed(2)}</p>
+            </div>
+            <!-- Управление количеством -->
+            <div class="qty-control">
+                <!-- Кнопка уменьшить количество -->
+                <button class="qty-btn btn-minus" data-id="${item.id}">−</button>
+                <!-- Поле с текущим количеством (можно редактировать вручную) -->
+                <input
+                    class="qty-value"
+                    type="number"
+                    min="1"
+                    value="${item.quantity}"
+                    data-id="${item.id}"
+                >
+                <!-- Кнопка увеличить количество -->
+                <button class="qty-btn btn-plus" data-id="${item.id}">+</button>
+            </div>
+            <!-- Сумма за данную позицию (цена × количество) -->
+            <p style="font-size:16px;color:#333;font-weight:500;min-width:70px;text-align:right;">
+                $${(item.price * item.quantity).toFixed(2)}
+            </p>
+            <!-- Кнопка удаления позиции из корзины -->
+            <button class="btn-remove-cart" data-id="${item.id}">✕</button>
+        `;
+
+        // Кнопка "−": уменьшаем на 1 (если quantity = 1 — удаляем)
+        row.querySelector(".btn-minus").addEventListener("click", () => {
+            const newQty = item.quantity - 1;
+            if (newQty < 1) {
+                removeFromCart(item.id); // удаляем если стало 0
+            } else {
+                updateQuantity(item.id, newQty);
+            }
+        });
+
+        // Кнопка "+": увеличиваем на 1
+        row.querySelector(".btn-plus").addEventListener("click", () => {
+            updateQuantity(item.id, item.quantity + 1);
+        });
+
+        // Поле ввода: можно вписать число вручную
+        // Срабатывает при потере фокуса (blur) или нажатии Enter
+        row.querySelector(".qty-value").addEventListener("change", function () {
+            const val = parseInt(this.value);
+            if (val < 1 || isNaN(val)) {
+                // Если ввели 0 или не число — удаляем позицию
+                removeFromCart(item.id);
+            } else {
+                updateQuantity(item.id, val);
+            }
+        });
+
+        // Кнопка удаления
+        row.querySelector(".btn-remove-cart").addEventListener("click", () => removeFromCart(item.id));
+
+        return row;
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: renderSummary
+       Считает общую стоимость и рендерит блок с итогом и кнопкой заказа.
+    ================================================================= */
+    function renderSummary(items) {
+        const summaryEl = document.getElementById("cartSummary");
+
+        /*
+           reduce() — метод массива для накопления значения.
+           Здесь суммируем price * quantity для каждого товара.
+           acc — накопитель, item — текущий элемент.
+        */
+        const total = items.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
+        summaryEl.innerHTML = `
+            <div class="cart-summary">
+                <p class="cart-total">Total: <span>$${total.toFixed(2)}</span></p>
+                <button class="checkout-btn" id="checkoutBtn">Checkout</button>
+            </div>
+        `;
+
+        // Кнопка оформления заказа
+        document.getElementById("checkoutBtn").addEventListener("click", checkout);
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: updateQuantity
+       Обновляет поле quantity у записи в корзине.
+       HTTP-метод: PATCH /cart/:id — частичное обновление (только quantity).
+    ================================================================= */
+    async function updateQuantity(cartId, newQty) {
+        try {
+            await fetch(`${API_URL}/cart/${cartId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ quantity: newQty })
+            });
+            loadCart(); // обновляем отображение
+        } catch (error) {
+            console.error("Ошибка обновления количества:", error);
+            showToast("Ошибка соединения");
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: removeFromCart
+       Удаляет позицию из корзины.
+       HTTP-метод: DELETE /cart/:id
+    ================================================================= */
+    async function removeFromCart(cartId) {
+        try {
+            await fetch(`${API_URL}/cart/${cartId}`, { method: "DELETE" });
+            showToast("Товар удалён из корзины");
+            loadCart();
+        } catch (error) {
+            console.error("Ошибка удаления:", error);
+            showToast("Ошибка соединения");
+        }
+    }
+
+    /* =================================================================
+       ФУНКЦИЯ: checkout (ОБНОВЛЕНО для лаб.№8)
+       Теперь оформление заказа делает ТРИ вещи:
+       1) Берёт текущие позиции корзины
+       2) Создаёт новую запись в коллекции "orders" (POST-запрос)
+          с привязкой к текущему пользователю (userId)
+       3) Очищает корзину (как и раньше — DELETE каждой позиции)
+    ================================================================= */
+   async function checkout() {
+    try {
+        // --- Шаг 1: получаем текущего пользователя ---
+        const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+        if (!currentUser) {
+            showToast("Please sign in to checkout");
+            setTimeout(() => { window.location.href = "register.html"; }, 1200);
+            return;
+        }
+
+        // --- Шаг 2: получаем ВСЕ товары из корзины и фильтруем ---
+        const res = await fetch(`${API_URL}/cart`);
+        const allItems = await res.json();
+        
+        // ✅ ФИЛЬТРУЕМ только товары текущего пользователя
+        const items = allItems.filter(item => item.userId === currentUser.id);
+
+        // Если корзина пуста — нечего оформлять
+        if (items.length === 0) {
+            showToast("Cart is empty");
+            return;
+        }
+
+        // --- Шаг 3: формируем массив товаров заказа ---
+        const orderItems = items.map(item => ({
+            productId: String(item.productId || item.id),
+            name:      item.name,
+            price:     item.price,
+            quantity:  item.quantity
+        }));
+
+        // Считаем итоговую сумму заказа
+        const total = orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+        // --- Шаг 4: создаём объект нового заказа ---
+        const newOrder = {
+            userId:    currentUser.id,
+            items:     orderItems,
+            total:     Number(total.toFixed(2)),
+            status:    "processing",
+            createdAt: new Date().toISOString().split("T")[0]
+        };
+
+        // --- Шаг 5: отправляем POST-запрос — создаём заказ в orders ---
+        const orderRes = await fetch(`${API_URL}/orders`, {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify(newOrder)
+        });
+
+        if (!orderRes.ok) throw new Error("Failed to create order");
+
+        // --- Шаг 6: очищаем ТОЛЬКО свои товары из корзины ---
+        await Promise.all(
+            items.map(item =>
+                fetch(`${API_URL}/cart/${item.id}`, { method: "DELETE" })
+            )
+        );
+
+        // --- Шаг 7: показываем модальное окно успеха ---
+        document.getElementById("successModal").classList.add("show");
+
+    } catch (error) {
+        console.error("Ошибка при оформлении заказа:", error);
+        showToast("Ошибка соединения с сервером");
+    }
+}
+
+    /* =================================================================
+       ОБРАБОТЧИК: кнопка закрытия модального окна
+       После закрытия — переходим на главную страницу каталога.
+    ================================================================= */
+    document.getElementById("modalCloseBtn").addEventListener("click", () => {
+        document.getElementById("successModal").classList.remove("show");
+        window.location.href = "catalog.html"; // переходим в каталог
+    });
+
+    /* =================================================================
+       ФУНКЦИЯ: showToast — всплывающее уведомление
+    ================================================================= */
+    function showToast(message) {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2000);
+    }
+
+    /* =================================================================
+       ИНИЦИАЛИЗАЦИЯ — загружаем корзину при открытии страницы
+    ================================================================= */
+    loadCart();
+
+    // ====== Показ кнопки ADMIN для администратора (лаб.№8) ======
+    // Проверяем роль текущего пользователя из localStorage
+    (function() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        if (currentUser && currentUser.role === 'admin') {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) adminLink.style.display = 'inline';
+        }
+    })();
+</script>
+
+<script src="i18n.js"></script>
+<script src="themeManager.js"></script>
+<script src="userProfile.js"></script>
+<script src="common.js"></script>
+</body>
+</html>

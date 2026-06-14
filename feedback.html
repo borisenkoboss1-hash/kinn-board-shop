@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- Адаптивность для мобильных -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINN — Отзывы</title>
+    <!-- Стили лендинга (шапка, шрифты, цвета) -->
+    <link rel="stylesheet" href="catalog.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="theme.css">
+    <!-- Стили форм (общие с регистрацией и админкой) -->
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<!-- ===== ШАПКА (та же структура что и в catalog.html) ===== -->
+<header class="header">
+    <nav class="nav">
+        <ul class="nav-left">
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">SHOP</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">STYLE QUIZ</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">ABOUT US</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">STORIES</li>
+        </ul>
+        <a href="index.html" class="logo"><span>K</span>INN</a>
+        <ul class="nav-right">
+            <li onclick="window.location.href='register.html'" style="cursor:pointer;" title="Аккаунт">👤</li>
+            <li onclick="window.location.href='cart.html'" style="cursor:pointer;" title="Корзина">🛒</li>
+            <li onclick="window.location.href='favorites.html'" style="cursor:pointer;" title="Избранное">♡</li>
+            <li onclick="window.location.href='feedback.html'" style="cursor:pointer; color:#d97b3f;" title="Отзывы">★</li>
+            <!-- Кнопка "Admin Panel" — видна только администратору -->
+            <li id="adminLink" style="display:none; cursor:pointer; color:#d97b3f; font-weight:700;"
+                onclick="window.location.href='admin.html'">ADMIN</li>
+        </ul>
+    </nav>
+</header>
+
+<main class="auth-page">
+    <div class="auth-card" style="max-width:560px;">
+
+        <h1 class="auth-title">Leave a Review</h1>
+
+        <!-- Блок: пользователь не залогинен — показываем сообщение -->
+        <div id="notLoggedIn" style="display:none; text-align:center; padding:32px 0;">
+            <p style="font-size:1.1rem; margin-bottom:16px;">
+                You must be logged in to leave a review.
+            </p>
+            <!-- Кнопка перехода на страницу входа -->
+            <a href="register.html" class="btn-primary">Sign In / Register</a>
+        </div>
+
+        <!-- Блок: пользователь — администратор — не может оставлять отзывы -->
+        <div id="adminBlock" style="display:none; text-align:center; padding:32px 0;">
+            <p style="font-size:1.1rem; color:#e74c3c;">
+                Administrators cannot leave reviews.
+            </p>
+        </div>
+
+        <!-- Блок: форма отзыва (видна только обычным залогиненным покупателям) -->
+        <form id="feedbackForm" class="auth-form" novalidate style="display:none;">
+
+            <!-- Информация о текущем пользователе -->
+            <div class="user-info-banner" id="userInfoBanner">
+                <!-- Заполняется JS: "Leaving review as: AnnSmi42" -->
+            </div>
+
+            <!-- --- Выбор товара --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Product <span class="required">*</span>
+                </label>
+                <!-- Список товаров — заполняется из json-server -->
+                <!-- Только те товары которые пользователь уже купил -->
+                <select id="productSelect" class="form-input"
+                        onchange="onProductChange()">
+                    <option value="">— Select a product —</option>
+                    <!-- Варианты добавляет JS из orders пользователя -->
+                </select>
+                <span class="field-hint" id="productHint">
+                    Only products you have purchased are available
+                </span>
+                <span class="field-error" id="productSelectError"></span>
+            </div>
+
+            <!-- --- Оценка (звёзды) --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Rating <span class="required">*</span>
+                </label>
+                <!-- Интерактивные звёзды: нажимаешь — выставляешь оценку -->
+                <div class="stars-input" id="starsInput">
+                    <!-- 5 звёзд, каждая при клике устанавливает значение -->
+                    <span class="star" data-value="1" onclick="setRating(1)">★</span>
+                    <span class="star" data-value="2" onclick="setRating(2)">★</span>
+                    <span class="star" data-value="3" onclick="setRating(3)">★</span>
+                    <span class="star" data-value="4" onclick="setRating(4)">★</span>
+                    <span class="star" data-value="5" onclick="setRating(5)">★</span>
+                </div>
+                <!-- Скрытое поле хранит числовое значение рейтинга -->
+                <input type="hidden" id="ratingValue" value="0">
+                <span class="field-error" id="ratingError"></span>
+            </div>
+
+            <!-- --- Текст отзыва --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Review Text <span class="required">*</span>
+                </label>
+                <!-- Минимум 20 символов для отправки на сервер -->
+                <textarea id="feedbackText" class="form-input feedback-textarea"
+                          placeholder="Share your experience with this product... (min 20 characters)"
+                          oninput="onTextInput()"></textarea>
+                <!-- Счётчик символов — показывает сколько уже написано -->
+                <div class="char-counter">
+                    <span id="charCount">0</span> / 20 min characters
+                </div>
+                <span class="field-error" id="feedbackTextError"></span>
+            </div>
+
+            <!-- --- Кнопка отправки --- -->
+            <!-- Активна только если форма валидна -->
+            <button type="submit" class="btn-primary btn-full"
+                    id="btnSubmitFeedback" disabled>
+                Submit Review
+            </button>
+
+        </form>
+
+        <!-- ===== СПИСОК СУЩЕСТВУЮЩИХ ОТЗЫВОВ ===== -->
+        <div id="feedbackList" style="margin-top:40px;">
+            <h2 style="font-size:1.3rem; margin-bottom:20px;">All Reviews</h2>
+            <!-- Фильтр по товару -->
+            <div class="form-group">
+                <select id="filterProduct" class="form-input"
+                        onchange="loadReviews()">
+                    <option value="">All products</option>
+                    <!-- Заполняется JS -->
+                </select>
+            </div>
+            <!-- Сюда JS вставит карточки отзывов -->
+            <div id="reviewsContainer">
+                <p style="color:#888; text-align:center;">Loading reviews...</p>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Уведомление -->
+<div class="toast" id="toast" style="display:none;"></div>
+
+<script src="feedback.js"></script>
+
+<script src="i18n.js"></script>
+<script src="themeManager.js"></script>
+<script src="userProfile.js"></script>
+<script src="common.js"></script>
+</body>
+</html>

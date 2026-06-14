@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINN — Hand-crafted Maple Boards</title>
+
+    <!-- Фавикон (требование лаб.№9) -->
+    <!-- Используем эмодзи-доску как favicon через data-URI чтобы не создавать отдельный файл -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🪵</text></svg>">
+
+    <!-- Стили лендинга -->
+    <link rel="stylesheet" href="catalog.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="theme.css">
+    <link rel="stylesheet" href="index.css">
+
+    <!-- Swiper — слайдер с открытым исходным кодом (НЕ jQuery, требование лаб.№9) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+</head>
+<body>
+
+<!-- ===== ШАПКА (как на остальных страницах) ===== -->
+<header class="header">
+    <nav class="nav">
+        <ul class="nav-left">
+            <!-- Ссылки-якоря для плавной прокрутки к разделам (common.js) -->
+            <!-- data-i18n переводит текст внутри ссылки, сама прокрутка не меняется -->
+            <li><a href="#hero-slider" data-i18n="nav-shop">SHOP</a></li>
+            <li><a href="#gallery-section" data-i18n="nav-gallery">GALLERY</a></li>
+            <li><a href="#video-section" data-i18n="nav-about">ABOUT US</a></li>
+            <li><a href="#parallax-section" data-i18n="nav-stories">STORIES</a></li>
+        </ul>
+        <a href="index.html" class="logo"><span>K</span>INN</a>
+        <ul class="nav-right">
+            <li onclick="window.location.href='register.html'" style="cursor:pointer;" title="Аккаунт">👤</li>
+            <li onclick="window.location.href='cart.html'" style="cursor:pointer;" title="Корзина">
+                🛒 <span id="cartCounterNav" class="nav-counter">0</span>
+            </li>
+            <li onclick="window.location.href='favorites.html'" style="cursor:pointer;" title="Избранное">
+                ♡ <span id="favCounterNav" class="nav-counter">0</span>
+            </li>
+            <li onclick="window.location.href='feedback.html'" style="cursor:pointer;" title="Отзывы">★</li>
+            <li id="adminLink" style="display:none; cursor:pointer; color:#d97b3f; font-weight:700;"
+                onclick="window.location.href='admin.html'">ADMIN</li>
+        </ul>
+    </nav>
+</header>
+
+<!-- ============================================================
+     1. SWIPER-СЛАЙДЕР (главный баннер)
+     Требование: автопереключение ИЛИ управление пользователем,
+     запрещён jQuery. Swiper — современная JS-библиотека без jQuery.
+     ============================================================ -->
+<section id="hero-slider" class="hero-slider-section">
+    <!-- Корневой контейнер Swiper -->
+    <div class="swiper hero-swiper">
+        <div class="swiper-wrapper">
+
+            <!-- Слайд 1 -->
+            <div class="swiper-slide hero-slide" style="background-image:url('images/hero.jpg')">
+                <div class="hero-content">
+                    <h1 data-i18n="hero1-title">Crafted with Care</h1>
+                    <p data-i18n="hero1-text">Solid maple boards made to last a lifetime in your kitchen</p>
+                    <a href="catalog.html" class="btn-primary" data-i18n="hero1-btn">Shop Collection</a>
+                </div>
+            </div>
+
+            <!-- Слайд 2 -->
+            <div class="swiper-slide hero-slide" style="background-image:url('images/table-time.jpg')">
+                <div class="hero-content">
+                    <h1 data-i18n="hero2-title">Gather Around the Table</h1>
+                    <p data-i18n="hero2-text">Serving boards designed for sharing good food and good company</p>
+                    <a href="catalog.html" class="btn-primary" data-i18n="hero2-btn">Explore Serving</a>
+                </div>
+            </div>
+
+            <!-- Слайд 3 -->
+            <div class="swiper-slide hero-slide" style="background-image:url('images/essentials.jpg')">
+                <div class="hero-content">
+                    <h1 data-i18n="hero3-title">Kitchen Essentials</h1>
+                    <p data-i18n="hero3-text">Everything you need for everyday cooking, beautifully made</p>
+                    <a href="catalog.html" class="btn-primary" data-i18n="hero3-btn">View Bundles</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Стрелки управления (пользователь может переключать вручную) -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <!-- Точки-индикаторы текущего слайда -->
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     2. ИНТЕРАКТИВНАЯ МЕДИАГАЛЕРЕЯ СО ЗВУКОМ
+     Требования:
+       - минимум 2 интерактивных элемента
+       - клик меняет картинку на случайную из 10+ и проигрывает звук
+       - у каждой картинки свой звук
+       - индикация играет/пауза
+       - плавный переход между картинками
+       - регулировка громкости
+     ============================================================ -->
+<section id="gallery-section" class="gallery-section reveal-on-scroll">
+    <h2 class="section-title" data-i18n="gallery-title">Sound of Wood</h2>
+    <p class="section-subtitle" data-i18n="gallery-subtitle">Click the icons to explore our workshop sounds and scenes</p>
+
+    <div class="gallery-wrapper">
+        <!-- Большое изображение в центре — меняется при клике -->
+        <div class="gallery-display">
+            <!-- id для JS, класс fade для плавного перехода через CSS-transition -->
+            <img id="galleryImage" src="images/gallery-1.jpg" alt="Workshop scene" class="gallery-img">
+
+            <!-- Индикатор играет/пауза — показывается поверх картинки -->
+            <div id="galleryStatus" class="gallery-status">
+                <span id="galleryStatusIcon">⏸</span>
+                <span id="galleryStatusText" data-i18n="gallery-status-paused">Paused</span>
+            </div>
+        </div>
+
+        <!-- Управление: 2+ интерактивных элемента -->
+        <div class="gallery-controls">
+
+            <!-- Интерактивный элемент №1: иконка пилы -->
+            <button class="gallery-btn" id="galleryBtnSaw" data-sound="saw" title="Workshop sounds">
+                <span class="gallery-btn-icon">🪚</span>
+                <span data-i18n="gallery-btn-workshop">Workshop</span>
+            </button>
+
+            <!-- Интерактивный элемент №2: иконка дерева -->
+            <button class="gallery-btn" id="galleryBtnWood" data-sound="wood" title="Nature sounds">
+                <span class="gallery-btn-icon">🌳</span>
+                <span data-i18n="gallery-btn-forest">Forest</span>
+            </button>
+
+            <!-- Интерактивный элемент №3: иконка кухни (доп.) -->
+            <button class="gallery-btn" id="galleryBtnKitchen" data-sound="kitchen" title="Kitchen sounds">
+                <span class="gallery-btn-icon">🍽️</span>
+                <span data-i18n="gallery-btn-kitchen">Kitchen</span>
+            </button>
+
+            <!-- Регулятор громкости (опциональное требование) -->
+            <div class="volume-control">
+                <span>🔊</span>
+                <input type="range" id="volumeSlider" min="0" max="100" value="50"
+                       title="Volume control">
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     3. ВИДЕО
+     Требование: одно из изображений становится элементом
+     управления, запускающим видео.
+     ============================================================ -->
+<section id="video-section" class="video-section reveal-on-scroll">
+    <h2 class="section-title">See How It's Made</h2>
+
+    <div class="video-wrapper">
+        <!-- Превью-изображение поверх видео — клик запускает воспроизведение -->
+        <div class="video-poster" id="videoPoster">
+            <img src="images/design-story.jpg" alt="Watch our process">
+            <!-- Кнопка Play поверх превью -->
+            <button class="play-btn" id="playBtn" aria-label="Play video">▶</button>
+        </div>
+
+        <!-- Видео изначально скрыто, появляется после клика -->
+        <!-- Используем встроенный тестовый видеоролик (можно заменить на свой mp4) -->
+        <video id="storyVideo" controls style="display:none;" poster="images/design-story.jpg">
+            <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     4. PARALLAX-ЭФФЕКТ
+     Требования: минимум 3 слоя с разной скоростью
+     (фон — медленнее всего, средний — умеренно, передний — быстрее всего),
+     минимум 1 слой с обратным направлением.
+     ============================================================ -->
+<section id="parallax-section" class="parallax-section">
+    <!-- Слой 1 (фон) — самый медленный, движется ВНИЗ при скролле (data-speed положительный) -->
+    <div class="parallax-layer parallax-bg" data-speed="0.3"
+         style="background-image:url('images/hero.jpg')"></div>
+
+    <!-- Слой 2 (средний) — умеренная скорость, движется ВНИЗ быстрее фона -->
+    <div class="parallax-layer parallax-mid" data-speed="0.6">
+        <img src="images/board-long.jpg" alt="Board" class="parallax-img-mid">
+    </div>
+
+    <!-- Слой 3 (передний) — обратное направление (отрицательная скорость → движется ВВЕРХ) -->
+    <div class="parallax-layer parallax-front" data-speed="-0.4">
+        <img src="images/board-short.jpg" alt="Small board" class="parallax-img-front">
+    </div>
+
+    <!-- Текстовый контент поверх всех слоёв — движется быстрее всего (наибольшая скорость) -->
+    <div class="parallax-layer parallax-content" data-speed="0.9">
+        <h2>Timeless Craftsmanship</h2>
+        <p>Every board tells a story of careful hands and quality wood</p>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     5. АНИМИРОВАННЫЕ СЧЁТЧИКИ-СТАТИСТИКА
+     ============================================================ -->
+<section class="stats-section reveal-on-scroll">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <!-- data-target — конечное значение до которого считаем -->
+            <div class="stat-number" data-target="1500">0</div>
+            <div class="stat-label">Boards Made</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" data-target="320">0</div>
+            <div class="stat-label">Happy Customers</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" data-target="15">0</div>
+            <div class="stat-label">Wood Types</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" data-target="8">0</div>
+            <div class="stat-label">Years of Craft</div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ============================================================
+     6. МОДАЛЬНОЕ ОКНО С ИНФОРМАЦИЕЙ О ТОВАРЕ (превью)
+     Открывается при клике по карточке.
+     ============================================================ -->
+<section class="featured-section reveal-on-scroll">
+    <h2 class="section-title">Featured Products</h2>
+    <!-- Сетка карточек заполняется через JS из db.json -->
+    <div class="featured-grid" id="featuredGrid"></div>
+</section>
+
+<!-- Модальное окно деталей товара (общее для всех карточек) -->
+<!-- Изначально скрыто display:none, JS показывает при клике -->
+<div class="modal-overlay" id="productModal" style="display:none;">
+    <div class="modal-box product-modal-box">
+        <button class="modal-close" id="closeProductModal">✕</button>
+        <!-- Содержимое заполняется JS в зависимости от выбранного товара -->
+        <div id="productModalContent"></div>
+    </div>
+</div>
+
+
+<!-- ===== ПОДВАЛ ===== -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <p>© 2021&nbsp;&nbsp;Kinn Home</p>
+            <span class="footer-divider"></span>
+            <p>Need to get in touch? Email us</p>
+            <p>at <a href="mailto:hello@kinnhome.co">hello@kinnhome.co</a></p>
+        </div>
+        <div class="footer-col">
+            <h2>EXPLORE</h2>
+            <ul>
+                <li><a href="catalog.html">SHOP</a></li>
+                <li><a href="#gallery-section">GALLERY</a></li>
+                <li><a href="#video-section">ABOUT US</a></li>
+                <li><a href="#parallax-section">STORIES</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h2>HELP</h2>
+            <ul>
+                <li><a href="#">FAQS + SHIPPING</a></li>
+                <li><a href="#">CONTACT</a></li>
+                <li><a href="#">TERMS</a></li>
+                <li><a href="#">TRADE</a></li>
+            </ul>
+        </div>
+        <div class="footer-social">
+            <img src="images/facebook.png" alt="Facebook">
+            <img src="images/Pinterest.png" alt="Pinterest">
+            <img src="images/Instagram.png" alt="Instagram">
+        </div>
+    </div>
+
+    <!-- Геокарта (Яндекс.Карты) — требование лаб.№9 -->
+    <div class="map-section">
+        <h2 class="section-title" style="color:#fff;">Visit Our Workshop</h2>
+        <!-- iframe со встроенной картой Яндекс — координаты центра Минска для примера -->
+        <iframe
+            src="https://yandex.ru/map-widget/v1/?ll=27.561831%2C53.902334&z=15&pt=27.561831,53.902334,pm2rdl"
+            width="100%" height="320" frameborder="0"
+            style="border:0; border-radius:8px;"
+            allowfullscreen="true"
+            title="Карта расположения мастерской KINN">
+        </iframe>
+    </div>
+</footer>
+
+<!-- ===== АУДИО ЭЛЕМЕНТЫ ДЛЯ ГАЛЕРЕИ (скрыты, управляются через JS) ===== -->
+<!-- preload="auto" — браузер заранее подгружает звук для мгновенного воспроизведения -->
+<audio id="soundSaw"     src="sounds/saw.mp3"     preload="auto"></audio>
+<audio id="soundWood"    src="sounds/wood.mp3"    preload="auto"></audio>
+<audio id="soundKitchen" src="sounds/kitchen.mp3" preload="auto"></audio>
+
+<!-- Swiper JS — без jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Скрипты страницы -->
+<script src="i18n.js"></script>
+<script src="themeManager.js"></script>
+<script src="userProfile.js"></script>
+<script src="common.js"></script>
+<script src="index.js"></script>
+
+</body>
+</html>

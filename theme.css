@@ -1,0 +1,290 @@
+/* ============================================================
+   theme.css — переменные тем (светлая/тёмная) + i18n утилиты
+   ============================================================
+
+   Принцип работы:
+   1. В :root объявлены CSS-переменные для СВЕТЛОЙ темы (по умолчанию)
+   2. В [data-theme="dark"] те же переменные переопределены для ТЁМНОЙ
+   3. JS добавляет атрибут data-theme="dark" на <html> когда
+      пользователь выбирает тёмную тему (themeManager.js)
+   4. Все основные цвета в catalog.css / style.css / auth.css
+      ПЕРЕОПРЕДЕЛЯЮТСЯ здесь через переменные — поэтому
+      переключение темы происходит мгновенно без перезагрузки
+
+   ============================================================ */
+
+/* ============================================================
+   СВЕТЛАЯ ТЕМА (значения по умолчанию)
+   ============================================================ */
+:root {
+    /* --- Фоны --- */
+    --body-bg:      #fffdf3; /* основной фон страницы (тёплый бежевый, как в style.css) */
+    --section-bg:   #fff7d6; /* фон секций (как в style.css) */
+    --card-bg:      #ffffff; /* фон карточек товаров */
+    --header-bg:    #ffffff; /* фон шапки сайта */
+
+    /* --- Текст --- */
+    --text-primary:   #333333; /* основной текст */
+    --text-secondary: #888888; /* второстепенный текст (подписи, цены и т.д.) */
+    --text-heading:   #000000; /* заголовки */
+
+    /* --- Акцентные цвета (не меняются между темами — это бренд-цвета) --- */
+    --accent:       #6d7352; /* оливковый — кнопки, активные элементы */
+    --accent-hover: #5a6043; /* оливковый темнее — hover-состояние */
+    --accent-gold:  #c8a951; /* золотой — избранное */
+    --accent-orange:#d97b3f; /* оранжевый — формы регистрации/админки */
+
+    /* --- Рамки и разделители --- */
+    --border-color: #e5e5e5;
+    --border-input: #d0d0d0;
+
+    /* --- Цвет текста НА кнопках с акцентным фоном --- */
+    --on-accent:    #ffffff; /* белый текст на оливковых/оранжевых кнопках */
+
+    /* --- Тень --- */
+    --shadow-color: rgba(0,0,0,0.08);
+}
+
+/* ============================================================
+   ТЁМНАЯ ТЕМА
+   Активируется атрибутом data-theme="dark" на <html>
+   ============================================================ */
+[data-theme="dark"] {
+    /* --- Фоны: было светлое → стало тёмное --- */
+    --body-bg:      #1c1c1a; /* тёмный фон вместо бежевого */
+    --section-bg:   #262521; /* тёмные секции вместо #fff7d6 */
+    --card-bg:      #2e2d28; /* тёмные карточки вместо белых */
+    --header-bg:    #232220; /* тёмная шапка */
+
+    /* --- Текст: было тёмное → стало светлое (чтобы не было "белый на белом") --- */
+    --text-primary:   #e8e6df; /* светлый основной текст */
+    --text-secondary: #a8a59c; /* светло-серый второстепенный текст */
+    --text-heading:   #ffffff; /* белые заголовки */
+
+    /* --- Акцент делаем чуть светлее, чтобы был контраст на тёмном фоне --- */
+    --accent:       #8a9270;
+    --accent-hover: #a3ac88;
+    --accent-gold:  #d9bc6e;
+    --accent-orange:#e8915c;
+
+    /* --- Рамки темнее --- */
+    --border-color: #3a3935;
+    --border-input: #4a4944;
+
+    /* --- Текст на кнопках остаётся тёмным для контраста со светлым акцентом --- */
+    --on-accent:    #1c1c1a;
+
+    /* --- Тень делаем светлее (на тёмном фоне обычная чёрная тень не видна) --- */
+    --shadow-color: rgba(0,0,0,0.4);
+}
+
+/* ============================================================
+   ПЕРЕОПРЕДЕЛЕНИЕ БАЗОВЫХ ЭЛЕМЕНТОВ ЧЕРЕЗ ПЕРЕМЕННЫЕ
+   ============================================================
+   Все эти правила имеют ТУ ЖЕ специфичность что и оригинальные
+   правила в style.css/catalog.css, но идут ПОСЛЕ них в порядке
+   подключения <link> — поэтому переопределяют цвета на переменные.
+*/
+
+/* Плавный переход цветов при переключении темы —
+   чтобы смена не была резкой "вспышкой" */
+html {
+    transition: background-color 0.3s ease;
+}
+body, .header, .footer, section, .gallery-section, .video-section,
+.featured-section, .auth-page, .admin-page {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Общий фон страницы --- */
+body {
+    background-color: var(--body-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* --- Шапка сайта --- */
+.header {
+    background-color: var(--header-bg) !important;
+    border-color: var(--border-color) !important;
+}
+.nav-left li, .nav-right li, .logo {
+    color: var(--text-primary) !important;
+}
+
+/* --- Секции с фоном "section-bg" (используют #fff7d6 в оригинале) --- */
+.hero, .skills, .gallery-section, .video-section, .featured-section {
+    background-color: var(--section-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* --- Заголовки --- */
+h1, h2, h3, .section-title {
+    color: var(--text-heading) !important;
+}
+
+/* --- Карточки товаров (каталог + featured) --- */
+.catalog-card, .featured-card, .review-card, .admin-form-card, .auth-card {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* --- Второстепенный текст (цены, подписи) --- */
+.price, .stat-label, .field-hint, .review-date, .footer p {
+    color: var(--text-secondary) !important;
+}
+
+/* --- Кнопки с акцентным фоном --- */
+.btn-primary, .btn-add-cart, .page-btn.active {
+    background-color: var(--accent) !important;
+    color: var(--on-accent) !important;
+    border-color: var(--accent) !important;
+}
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--accent-hover) !important;
+}
+
+/* --- Поля форм --- */
+.form-input, input, select, textarea {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-input) !important;
+}
+/* Placeholder тоже должен быть видимым в тёмной теме */
+.form-input::placeholder, input::placeholder, textarea::placeholder {
+    color: var(--text-secondary) !important;
+}
+
+/* --- Таблицы админки --- */
+.admin-table {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+.admin-table th {
+    background-color: var(--section-bg) !important;
+}
+.admin-table td, .admin-table th {
+    border-color: var(--border-color) !important;
+}
+
+/* --- Модальные окна --- */
+.modal-box {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* --- Подвал --- */
+.footer {
+    background-color: var(--section-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* --- Parallax текст остаётся белым на фото в обеих темах (не трогаем) --- */
+
+
+/* ============================================================
+   КНОПКИ ПЕРЕКЛЮЧЕНИЯ ЯЗЫКА И ТЕМЫ В ШАПКЕ
+   ============================================================ */
+
+/* Контейнер с переключателями — добавляется в nav-right */
+.lang-theme-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 4px;
+}
+
+/* Кнопки EN / RU */
+.lang-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+}
+.lang-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+/* Активный язык подсвечивается заливкой (требование методички:
+   "надписи становятся активными, выделяются стилем") */
+.lang-btn.active {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--accent);
+}
+
+/* Кнопка-переключатель темы (иконка солнца/луны) */
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+.theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: rotate(20deg);
+}
+
+
+/* ============================================================
+   МОДАЛЬНОЕ ОКНО ПРОФИЛЯ ПОЛЬЗОВАТЕЛЯ
+   ============================================================ */
+
+/* Кнопка "Выйти" в шапке — видна только после авторизации */
+.logout-btn {
+    color: #e74c3c !important;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Иконка пользователя когда залогинен — подсвечена акцентом */
+.user-icon-active {
+    color: var(--accent) !important;
+    font-weight: 700;
+}
+
+/* Содержимое модалки профиля */
+.profile-modal-box {
+    max-width: 460px;
+}
+.profile-field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+@media (max-width: 480px) {
+    .profile-field-row { grid-template-columns: 1fr; }
+}
+
+/* Кнопка сброса настроек — серая, расположена отдельно */
+.reset-settings-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 12px;
+    width: 100%;
+    transition: all 0.2s;
+}
+.reset-settings-btn:hover {
+    border-color: #e74c3c;
+    color: #e74c3c;
+}

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- Адаптивность для мобильных устройств -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINN — Регистрация</title>
+    <!-- Подключаем стили лендинга (шапка, шрифты, цвета) -->
+    <link rel="stylesheet" href="catalog.css">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="theme.css">
+    <!-- Подключаем стили только для страниц регистрации/входа/админки -->
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+<!-- ===== ШАПКА САЙТА (та же структура что и в catalog.html) ===== -->
+<header class="header">
+    <nav class="nav">
+        <ul class="nav-left">
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">SHOP</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">STYLE QUIZ</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">ABOUT US</li>
+            <li onclick="window.location.href='catalog.html'" style="cursor:pointer;">STORIES</li>
+        </ul>
+        <a href="index.html" class="logo"><span>K</span>INN</a>
+        <ul class="nav-right">
+            <!-- Кнопка профиля/входа -->
+            <li onclick="window.location.href='register.html'" style="cursor:pointer;" title="Аккаунт">👤</li>
+            <li onclick="window.location.href='cart.html'" style="cursor:pointer;" title="Корзина">🛒</li>
+            <li onclick="window.location.href='favorites.html'" style="cursor:pointer;" title="Избранное">♡</li>
+            <!-- Ссылка на отзывы -->
+            <li onclick="window.location.href='feedback.html'" style="cursor:pointer;" title="Отзывы">★</li>
+            <!-- Кнопка "Admin Panel" — видна только администратору, управляется через JS -->
+            <li id="adminLink" style="display:none; cursor:pointer; color:#d97b3f; font-weight:700;"
+                onclick="window.location.href='admin.html'">ADMIN</li>
+        </ul>
+    </nav>
+</header>
+
+<!-- ===== ОСНОВНОЙ КОНТЕНТ ===== -->
+<main class="auth-page">
+    <div class="auth-card">
+
+        <!-- Заголовок страницы -->
+        <h1 class="auth-title">Create Account</h1>
+
+        <!-- Переключатель: регистрация / вход -->
+        <div class="auth-tabs">
+            <!-- Активная вкладка — регистрация -->
+            <button class="auth-tab active" id="tabRegister" onclick="showTab('register')">Register</button>
+            <!-- Неактивная вкладка — вход -->
+            <button class="auth-tab" id="tabLogin" onclick="showTab('login')">Login</button>
+        </div>
+
+        <!-- ===== ФОРМА РЕГИСТРАЦИИ ===== -->
+        <!-- novalidate — отключаем встроенную валидацию браузера, делаем свою на JS -->
+        <form id="registerForm" class="auth-form" novalidate>
+
+            <!-- --- ФИО: три отдельных поля --- -->
+            <div class="form-row">
+                <!-- Поле Имя — обязательное (помечено звёздочкой) -->
+                <div class="form-group">
+                    <label class="form-label">
+                        First Name <span class="required">*</span>
+                    </label>
+                    <!-- oninput — при каждом вводе символа убираем сообщение об ошибке -->
+                    <input type="text" id="firstName" class="form-input"
+                           placeholder="Anna" autocomplete="given-name"
+                           oninput="clearError('firstName')">
+                    <!-- Здесь JS будет показывать ошибку если поле не прошло валидацию -->
+                    <span class="field-error" id="firstNameError"></span>
+                </div>
+
+                <!-- Поле Фамилия — обязательное -->
+                <div class="form-group">
+                    <label class="form-label">
+                        Last Name <span class="required">*</span>
+                    </label>
+                    <input type="text" id="lastName" class="form-input"
+                           placeholder="Smith" autocomplete="family-name"
+                           oninput="clearError('lastName')">
+                    <span class="field-error" id="lastNameError"></span>
+                </div>
+            </div>
+
+            <!-- Поле Отчество — НЕобязательное (нет звёздочки) -->
+            <div class="form-group">
+                <label class="form-label">
+                    Patronymic <span class="optional">(optional)</span>
+                </label>
+                <input type="text" id="patronymic" class="form-input"
+                       placeholder="Lee" autocomplete="additional-name"
+                       oninput="clearError('patronymic')">
+                <span class="field-error" id="patronymicError"></span>
+            </div>
+
+            <!-- --- Телефон --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Phone (Belarus) <span class="required">*</span>
+                </label>
+                <!-- Ввод телефона — только номера РБ (+375...) -->
+                <!-- oninput — сразу форматируем номер и проверяем -->
+                <input type="tel" id="phone" class="form-input"
+                       placeholder="+375 (29) 123-45-67"
+                       oninput="formatPhone(this); clearError('phone')">
+                <!-- Подсказка под полем -->
+                <span class="field-hint">Format: +375 (XX) XXX-XX-XX</span>
+                <span class="field-error" id="phoneError"></span>
+            </div>
+
+            <!-- --- Email --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Email <span class="required">*</span>
+                </label>
+                <input type="email" id="email" class="form-input"
+                       placeholder="anna@example.com" autocomplete="email"
+                       oninput="clearError('email')">
+                <span class="field-error" id="emailError"></span>
+            </div>
+
+            <!-- --- Дата рождения --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Date of Birth <span class="required">*</span>
+                </label>
+                <!-- Пользователю должно быть 16+ лет -->
+                <input type="date" id="birthDate" class="form-input"
+                       oninput="clearError('birthDate')">
+                <span class="field-hint">You must be at least 16 years old</span>
+                <span class="field-error" id="birthDateError"></span>
+            </div>
+
+            <!-- --- Никнейм (автогенерация) --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Nickname <span class="required">*</span>
+                </label>
+                <div class="nickname-row">
+                    <!-- Поле никнейма — заполняется автоматически -->
+                    <input type="text" id="nickname" class="form-input"
+                           placeholder="Will be generated automatically"
+                           oninput="clearError('nickname')" readonly>
+                    <!-- Кнопка генерации нового никнейма -->
+                    <!-- Нажав её, пользователь получает новый вариант (максимум 5 раз) -->
+                    <button type="button" class="btn-generate" id="btnGenerate"
+                            onclick="generateNickname()">
+                        🔄 Generate
+                    </button>
+                </div>
+                <!-- Счётчик попыток генерации (осталось X из 5) -->
+                <span class="field-hint" id="nicknameHint">
+                    Click Generate to create a nickname
+                </span>
+                <span class="field-error" id="nicknameError"></span>
+            </div>
+
+            <!-- --- Пароль --- -->
+            <div class="form-group">
+                <label class="form-label">
+                    Password <span class="required">*</span>
+                </label>
+                <!-- Выбор способа задания пароля: вручную или автоматически -->
+                <div class="password-mode">
+                    <!-- Если выбран ручной ввод — показываем поля пароля -->
+                    <label class="radio-label">
+                        <input type="radio" name="passwordMode" value="manual"
+                               checked onchange="switchPasswordMode('manual')">
+                        Enter manually
+                    </label>
+                    <!-- Если выбрана автогенерация — скрываем поля, генерируем пароль -->
+                    <label class="radio-label">
+                        <input type="radio" name="passwordMode" value="auto"
+                               onchange="switchPasswordMode('auto')">
+                        Generate automatically
+                    </label>
+                </div>
+
+                <!-- Блок ручного ввода пароля (виден по умолчанию) -->
+                <div id="manualPasswordBlock">
+                    <!-- Основное поле пароля -->
+                    <div class="input-eye-wrap">
+                        <input type="password" id="password" class="form-input"
+                               placeholder="Min 8 chars, A-z, 0-9, !@#"
+                               oninput="checkPasswordStrength(); clearError('password')">
+                        <!-- Кнопка показать/скрыть пароль (иконка глаза) -->
+                        <button type="button" class="eye-btn" onclick="toggleEye('password', this)">👁</button>
+                    </div>
+
+                    <!-- Индикатор силы пароля: полоска меняет цвет от красного к зелёному -->
+                    <div class="strength-bar">
+                        <div class="strength-fill" id="strengthFill"></div>
+                    </div>
+                    <!-- Текстовое описание силы пароля (Weak / Medium / Strong) -->
+                    <span class="strength-label" id="strengthLabel"></span>
+                    <span class="field-error" id="passwordError"></span>
+
+                    <!-- Поле подтверждения пароля — нельзя вставить из буфера обмена -->
+                    <label class="form-label" style="margin-top:10px;">
+                        Confirm Password <span class="required">*</span>
+                    </label>
+                    <div class="input-eye-wrap">
+                        <!-- onpaste="return false" — запрещаем вставку чтобы пользователь набрал сам -->
+                        <input type="password" id="confirmPassword" class="form-input"
+                               placeholder="Repeat your password"
+                               oninput="clearError('confirmPassword')"
+                               onpaste="return false">
+                        <button type="button" class="eye-btn" onclick="toggleEye('confirmPassword', this)">👁</button>
+                    </div>
+                    <span class="field-error" id="confirmPasswordError"></span>
+                </div>
+
+                <!-- Блок автогенерации пароля (скрыт по умолчанию) -->
+                <div id="autoPasswordBlock" style="display:none;">
+                    <div class="input-eye-wrap">
+                        <!-- Поле только для чтения — показывает сгенерированный пароль -->
+                        <input type="text" id="autoPassword" class="form-input"
+                               placeholder="Click Generate to get a password" readonly>
+                        <!-- Кнопка генерации нового пароля -->
+                        <button type="button" class="btn-generate"
+                                onclick="generateAutoPassword()">🔄</button>
+                    </div>
+                    <span class="field-hint">Save this password before submitting!</span>
+                </div>
+            </div>
+
+            <!-- --- Согласие с пользовательским соглашением --- -->
+            <div class="form-group">
+                <!-- Чекбокс — без него кнопка регистрации остаётся неактивной -->
+                <label class="checkbox-label">
+                    <input type="checkbox" id="agreement"
+                           onchange="validateForm()">
+                    <span>
+                        I have read and agree to the
+                        <!-- Ссылка на соглашение открывает модальное окно -->
+                        <a href="#" class="link-orange" onclick="showAgreement(event)">User Agreement</a>
+                    </span>
+                </label>
+                <span class="field-error" id="agreementError"></span>
+            </div>
+
+            <!-- --- Кнопка регистрации --- -->
+            <!-- disabled — кнопка заблокирована пока форма не валидна -->
+            <!-- Становится активной только когда все поля заполнены правильно -->
+            <button type="submit" class="btn-primary btn-full" id="btnRegister" disabled>
+                Create Account
+            </button>
+
+            <!-- Ссылка для тех кто уже зарегистрирован -->
+            <p class="auth-switch">
+                Already have an account?
+                <a href="#" onclick="showTab('login')" class="link-orange">Sign in</a>
+            </p>
+
+        </form>
+
+        <!-- ===== ФОРМА ВХОДА (скрыта по умолчанию) ===== -->
+        <form id="loginForm" class="auth-form" style="display:none;" novalidate>
+
+            <div class="form-group">
+                <label class="form-label">Email <span class="required">*</span></label>
+                <input type="email" id="loginEmail" class="form-input"
+                       placeholder="anna@example.com"
+                       oninput="clearError('loginEmail')">
+                <span class="field-error" id="loginEmailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password <span class="required">*</span></label>
+                <div class="input-eye-wrap">
+                    <input type="password" id="loginPassword" class="form-input"
+                           placeholder="Your password"
+                           oninput="clearError('loginPassword')">
+                    <button type="button" class="eye-btn" onclick="toggleEye('loginPassword', this)">👁</button>
+                </div>
+                <span class="field-error" id="loginPasswordError"></span>
+            </div>
+
+            <button type="submit" class="btn-primary btn-full" id="btnLogin">
+                Sign In
+            </button>
+
+            <p class="auth-switch">
+                Don't have an account?
+                <a href="#" onclick="showTab('register')" class="link-orange">Register</a>
+            </p>
+
+        </form>
+
+    </div><!-- .auth-card -->
+</main>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО: ПОЛЬЗОВАТЕЛЬСКОЕ СОГЛАШЕНИЕ ===== -->
+<!-- Открывается при клике на ссылку "User Agreement" в форме -->
+<div class="modal-overlay" id="agreementModal" style="display:none;"
+     onclick="closeAgreement(event)">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeAgreementBtn()">✕</button>
+        <h2>User Agreement</h2>
+        <div class="modal-content">
+            <p>By registering on KINN, you agree to:</p>
+            <ul>
+                <li>Provide accurate personal information</li>
+                <li>Keep your password secure and confidential</li>
+                <li>Use the platform only for lawful purposes</li>
+                <li>Not share your account with third parties</li>
+                <li>Accept our Privacy Policy and Terms of Service</li>
+            </ul>
+            <p>We store your data securely and never share it with third parties without your consent.</p>
+        </div>
+        <!-- Кнопка принятия соглашения — автоматически ставит галочку в форме -->
+        <button class="btn-primary" onclick="acceptAgreement()">I Agree</button>
+    </div>
+</div>
+
+<!-- ===== УВЕДОМЛЕНИЕ (всплывающее сообщение) ===== -->
+<!-- Показывается после успешной регистрации или ошибки -->
+<div class="toast" id="toast" style="display:none;"></div>
+
+<!-- Подключаем JavaScript для этой страницы -->
+<script src="register.js"></script>
+
+<script src="i18n.js"></script>
+<script src="themeManager.js"></script>
+<script src="userProfile.js"></script>
+<script src="common.js"></script>
+</body>
+</html>

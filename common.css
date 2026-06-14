@@ -1,0 +1,475 @@
+/* ============================================================
+   common.css — стили общих интерактивных элементов
+
+   ============================================================ */
+
+/* ============================================================
+   1. ПРЕЛОАДЕР
+   ============================================================ */
+
+/* Полноэкранный оверлей поверх всего сайта */
+#preloader {
+    position: fixed;
+    inset: 0; /* сокращение для top:0; right:0; bottom:0; left:0 */
+    background: #f7f5f2; /* фон в стиле лендинга KINN */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; /* поверх всех остальных элементов */
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+/* Класс .hidden добавляется через JS когда страница загрузилась */
+#preloader.hidden {
+    opacity: 0;
+    visibility: hidden; /* убираем из потока кликов */
+    pointer-events: none;
+}
+
+/* Крутящийся спиннер — кольцо с одним прозрачным сегментом */
+.preloader-spinner {
+    width: 56px;
+    height: 56px;
+    border: 4px solid #e5dfd6;          /* светлый фон кольца */
+    border-top-color: #d97b3f;          /* фирменный оранжевый сегмент */
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite; /* бесконечное вращение */
+}
+
+/* Текст логотипа под спиннером */
+.preloader-text {
+    margin-top: 16px;
+    font-family: 'Playfair Display', serif; /* шрифт лендинга, если подключён */
+    font-size: 1.4rem;
+    letter-spacing: 4px;
+    color: #6d7352;
+}
+
+/* Анимация вращения на 360 градусов */
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+
+/* ============================================================
+   2. BURGER MENU
+   ============================================================ */
+
+/* Кнопка-бургер: скрыта на десктопе, появляется на мобильных */
+.burger-btn {
+    display: none; /* по умолчанию скрыта — показываем через media query ниже */
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1001; /* выше overlay и меню */
+    padding: 0;
+}
+
+/* Каждая полоска бургера */
+.burger-btn span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background: #333;
+    border-radius: 2px;
+    /* transition для плавной анимации поворота при открытии */
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Анимация превращения бургера в крестик при открытии (.active) */
+/* Верхняя полоска поворачивается на 45° и сдвигается вниз */
+.burger-btn.active span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+/* Средняя полоска исчезает */
+.burger-btn.active span:nth-child(2) {
+    opacity: 0;
+}
+/* Нижняя полоска поворачивается на -45° и сдвигается вверх — получается крестик */
+.burger-btn.active span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Затемнённая область фона при открытом меню */
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 999; /* ниже мобильного меню, но выше остального контента */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+/* Когда меню открыто — оверлей плавно появляется */
+.menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Мобильное меню — выезжает справа */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 280px;
+    max-width: 80vw; /* на очень узких экранах не шире 80% ширины */
+    background: #fff;
+    z-index: 1000; /* выше overlay */
+    box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+    padding: 80px 24px 24px;
+    overflow-y: auto;
+
+    /* По умолчанию меню сдвинуто за пределы экрана вправо */
+    transform: translateX(100%);
+    transition: transform 0.35s ease; /* плавное выдвижение */
+}
+/* Класс .active — меню выезжает на экран */
+.mobile-menu.active {
+    transform: translateX(0);
+}
+
+/* Внутри мобильного меню — списки nav-left/nav-right становятся столбцами */
+.mobile-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.mobile-menu li,
+.mobile-menu a {
+    font-size: 1rem;
+    color: #333;
+    text-decoration: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+}
+/* Скрываем логотип внутри клонированного меню — он там не нужен */
+.mobile-menu .logo {
+    display: none;
+}
+
+/* Бургер показываем только на узких экранах (план: ≤768px) */
+@media (max-width: 768px) {
+    .burger-btn { display: flex; }
+
+    /* Прячем оригинальные nav-left и nav-right на мобильных —
+       вместо них используется .mobile-menu */
+    .nav > .nav-left,
+    .nav > .nav-right {
+        display: none;
+    }
+}
+
+
+/* ============================================================
+   3. РЕАКЦИЯ НА СКРОЛЛ — появление элементов
+   ============================================================ */
+
+/* Изначальное состояние элемента — невидим и смещён вниз на 30px */
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+/* Когда JS добавляет класс .revealed — элемент плавно появляется на месте */
+.reveal-on-scroll.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ============================================================
+   4. АНИМИРОВАННЫЕ СЧЁТЧИКИ
+   ============================================================ */
+
+/* Короткая "пульсация" числа при изменении значения */
+.counter-pulse {
+    display: inline-block;
+    animation: pulse 0.3s ease;
+}
+@keyframes pulse {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.3); color: #d97b3f; }
+    100% { transform: scale(1); }
+}
+
+
+/* ============================================================
+   5. ВСПЛЫВАЮЩИЕ УВЕДОМЛЕНИЯ (TOAST) — общий стиль
+   ============================================================ */
+/* Если на странице уже есть .toast из catalog.css — этот блок дополняет его */
+
+.toast-stack {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 2000;
+    pointer-events: none; /* клики проходят сквозь контейнер */
+}
+
+.toast-item {
+    background: #333;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    min-width: 220px;
+    /* Анимация появления справа */
+    animation: toastSlideIn 0.3s ease, toastFadeOut 0.4s ease 2.6s forwards;
+}
+.toast-item.success { background: #27ae60; }
+.toast-item.error   { background: #e74c3c; }
+.toast-item.info    { background: #3498db; }
+
+@keyframes toastSlideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes toastFadeOut {
+    to { opacity: 0; transform: translateX(20px); }
+}
+
+
+
+/* ============================================================
+   6. МОДАЛЬНЫЕ ОКНА (профиль, товары)
+   ============================================================ */
+
+/* Затемнённый фон модального окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(3px);
+}
+
+/* Белое окно с содержимым */
+.modal-box {
+    background: #fff;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s ease;
+}
+
+/* Анимация появления модалки */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Кнопка закрытия (крестик) */
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+    z-index: 10;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+/* Специальные стили для модалки профиля */
+.profile-modal-box {
+    max-width: 550px;
+    padding: 30px 24px 24px;
+}
+
+.profile-field-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.profile-field-row .form-group {
+    flex: 1;
+}
+
+/* Кнопка сброса настроек */
+.reset-settings-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 16px;
+    background: transparent;
+    border: 1px solid #e0dcd7;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.reset-settings-btn:hover {
+    background: #f7f5f2;
+    border-color: #d97b3f;
+    color: #d97b3f;
+}
+
+/* Тёмная тема для модалок */
+[data-theme="dark"] .modal-box {
+    background: #2d2d2d;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .reset-settings-btn {
+    border-color: #444;
+    color: #aaa;
+}
+
+[data-theme="dark"] .reset-settings-btn:hover {
+    background: #3d3d3d;
+    border-color: #d97b3f;
+    color: #d97b3f;
+}
+
+[data-theme="dark"] .modal-close {
+    color: #aaa;
+}
+
+[data-theme="dark"] .modal-close:hover {
+    color: #fff;
+}
+
+
+/* ============================================================
+   10. БУРГЕР-МЕНЮ - ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ
+   ============================================================ */
+
+@media (max-width: 768px) {
+    /* Делаем навигацию flex-контейнером для бургера */
+    .nav {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 0 16px !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Прячем левое и правое меню */
+    .nav > .nav-left,
+    .nav > .nav-right {
+        display: none !important;
+    }
+    
+    /* Показываем бургер */
+    .burger-btn {
+        display: flex !important;
+    }
+    
+    /* Мобильное меню */
+    .mobile-menu {
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        width: 280px !important;
+        max-width: 80vw !important;
+        height: 100vh !important;
+        background: #f7f5f2 !important;
+        z-index: 10000 !important;
+        transform: translateX(100%) !important;
+        transition: transform 0.35s ease !important;
+        padding: 80px 24px 24px !important;
+        overflow-y: auto !important;
+        box-shadow: -4px 0 24px rgba(0,0,0,0.1) !important;
+    }
+    
+    .mobile-menu.active {
+        transform: translateX(0) !important;
+    }
+    
+    /* Затемнение */
+    .menu-overlay {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0,0,0,0.5) !important;
+        z-index: 9999 !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        transition: opacity 0.3s ease, visibility 0.3s ease !important;
+    }
+    
+    .menu-overlay.active {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    
+    /* Стили для ссылок в мобильном меню */
+    .mobile-menu ul {
+        list-style: none !important;
+        padding: 0 !important;
+        margin: 0 0 24px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
+    
+    .mobile-menu li,
+    .mobile-menu a {
+        font-size: 1rem !important;
+        color: #333 !important;
+        text-decoration: none !important;
+        cursor: pointer !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .mobile-menu .logo {
+        display: none !important;
+    }
+    
+    /* Тёмная тема */
+    [data-theme="dark"] .mobile-menu {
+        background: #1a1a1a !important;
+    }
+    
+    [data-theme="dark"] .mobile-menu li,
+    [data-theme="dark"] .mobile-menu a {
+        color: #e0e0e0 !important;
+    }
+    
+    [data-theme="dark"] .burger-btn span {
+        background: #e0e0e0 !important;
+    }
+}

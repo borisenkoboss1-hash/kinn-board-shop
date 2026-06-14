@@ -1,0 +1,875 @@
+body {
+    margin: 0; 
+    /* Убираем стандартные отступы браузера вокруг страницы */
+
+    font-family: Arial, sans-serif;
+    /* Устанавливаем шрифт для всего документа */
+}
+
+/* ===========================
+   HEADER — шапка сайта
+   =========================== */
+
+.header {
+              
+    padding: 32px 0 24px;
+    border-bottom: 1px solid #e5e5e5;
+  /*  padding: 20px 40px;
+    /* Внутренние отступы сверху/снизу 20px, слева/справа 40px */
+}
+
+.nav {
+
+     /* max-width: 1280px; */
+    /* margin: 0 auto; */
+    /* padding: 0 40px; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: space-between; */
+}
+
+.nav-left li:first-child::after {
+    content: "⌄";
+    font-size: 17px;
+    margin-left: 9px;
+    font-weight: 700; 
+    position: relative;
+    top: -7px;
+}
+
+
+
+.nav-left {
+    display: flex;
+    /* Делаем списки горизонтальными */
+
+    gap: 46px;
+    /* Расстояние между пунктами меню */
+
+    list-style: none;
+    /* Убираем маркеры списка (точки) */
+
+    padding: 0;
+    margin: 0;
+    /* Убираем стандартные отступы списка */
+    margin-left: -10px;
+   
+}
+.nav-left li {
+    font-size: 15px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.logo {
+    font-size: 25px;
+    text-transform: uppercase;
+    margin-right: 388px;
+    letter-spacing: 0.5em;
+    cursor: pointer;
+margin-top: 5px; 
+    /* Включаем flex, чтобы выровнять все буквы по НИЖНЕМУ краю */
+    display: flex;
+    align-items: flex-end; 
+}
+
+
+
+
+.nav-left li:nth-child(3) {
+    margin-left: -7px; /* ABOUT US ближе */
+}
+
+.nav-left li:nth-child(4) {
+    margin-left: -5px; /* STORIES ближе */
+}
+
+.nav-left li:nth-child(4)::after {
+    content: "⌄";
+    font-size: 17px;
+    margin-left: 4px;
+    font-weight: 700; 
+    position: relative;
+    top: -7px;
+}
+
+
+
+
+
+.logo span {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    
+    /* Рисуем палку */
+    border-top: 3px solid #6d7352; 
+    
+      width: fit-content;
+    /* Убираем лишнюю высоту, чтобы буква не толкала строку */
+    line-height: 1; 
+    
+    /* Расстояние от буквы до палки */
+    padding-top: 0.1px; 
+    
+    /* Это заставит K стоять на той же линии, что и INN */
+    vertical-align: bottom;
+    position: relative;
+    top: -2px; /* Отрицательное значение поднимает букву ВВЕРХ */
+}
+
+
+
+.btn {
+    padding: 14px 32px;
+    /* Внутренние отступы кнопки */
+
+    background-color: white;
+    /* Цвет фона кнопки */
+color: #fff;
+    border: none;
+    /* Убираем рамку */
+font-size: 14px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    /* Курсор "рука" при наведении */
+}
+
+.btn:hover {
+    background-color: #ddd;
+    /* При наведении кнопка слегка темнеет */
+}
+
+/* ===========================
+   FOOTER — нижняя часть сайта
+   =========================== */
+
+.footer {
+    background-color: #a3a58f;
+;
+
+    margin: 65px 50px 20px 50px; 
+    /* 0 — сверху
+       60px — слева
+       5px — снизу (пара миллиметров)
+       60px — справа */
+min-height: 34vh; /* ← растягивает блок почти на весь экран */
+    padding: 120px 80px;
+    /* внутренние отступы — как в макете */
+   
+    border-radius: 4px; 
+    /* если в макете углы слегка скруглены — можно оставить, если нет — убери */
+}
+
+
+
+
+
+
+.footer {
+    background-color: #8c9074;
+;
+    /* Цвет фона футера */
+
+    padding: 60px 80px;
+    /* Внутренние отступы футера */
+}
+
+.footer-container {
+    display: grid;
+    /* Включаем CSS Grid — современная технология сеток */
+
+    grid-template-columns: 1fr 1fr 1fr auto;
+    /* 4 колонки: три равные + одна под соц. иконки */
+
+    gap: 40px;
+    /* Расстояние между колонками */
+}
+
+.footer-col h3 {
+    font-size: 11px;
+    /* Размер заголовков колонок */
+
+    margin-bottom: 15px;
+    /* Отступ снизу */
+}
+
+.footer-col ul {
+    list-style: none;
+    /* Убираем точки у списка */
+
+    padding: 0;
+    /* Убираем внутренние отступы */
+}
+
+.footer-col ul li {
+    margin-bottom: 10px;
+    /* Отступ между пунктами списка */
+}
+
+.footer-col a {
+    text-decoration: none;
+    /* Убираем подчёркивание у ссылок */
+
+    color: black;
+    /* Цвет текста ссылок */
+}
+
+.footer-col a:hover {
+    text-decoration: underline;
+    /* При наведении появляется подчёркивание */
+}
+
+.footer-social img {
+    width: 21px;
+    /* Размер иконок соцсетей */
+
+    margin-left: 15px;
+    /* Отступ между иконками */
+
+    cursor: pointer;
+    /* Курсор "рука" при наведении */
+    transform: translateX(50px) translateY(10px);
+ 
+}
+
+.footer-social img:hover {
+    opacity: 0.7;
+    /* Иконка становится чуть прозрачной при наведении */
+}
+
+.footer-social img:first-child {
+    width: 17px;   /* было 24px — теперь меньше */
+}
+
+
+
+
+
+
+.footer-col:first-child {
+    margin-top: -7px;   /* опустить ниже */
+    margin-left: -50px;  /* сдвинуть правее */
+}
+
+
+.footer-divider {
+    display: block;
+    width: 40px;        /* длина палочки*/
+    height: 2px;        /* толщина */
+    background: #ffffff; 
+    margin: 20px 0 14px 0;
+    /* 10px — расстояние от 2021 до палочки (ниже)
+       14px — расстояние от палочки до следующего текста */
+}
+
+.contact-text {
+    margin-top: 20px; /* опускает текст вниз */
+}
+.second-line {
+    margin-top: -8px; /* регулируешь расстояние */
+}
+.footer-col:nth-child(2) {
+    margin-left: -51px; /* сдвиг вправо */
+    margin-top: -6px; /* поднимает колонку выше */
+}
+.footer-col:nth-child(2) h2 {
+    font-size: 14px; /* уменьшенный размер */
+    letter-spacing: 1px; /* чтобы выглядело аккуратно */
+    font-weight: normal;
+}
+
+ /*Найти вторую колонку: .footer-col:nth-child(2)
+Внутри неё найти заголовок: h2
+Создать виртуальный элемент (как будто маленький <div>)
+Вставить его сразу после содержимого h2, но внутри самого h2*/
+
+.footer-col:nth-child(2) h2::after {
+   
+    content: "";        /* создаёт виртуальный элемент */
+    display: block;     /* делает его блочным */
+    width: 40px;
+    height: 2px;        
+    background: #ffffff;
+    margin-top: 18px;    
+}
+.footer-col:nth-child(2) ul {
+    margin-top: 28px; /* опускает весь список ниже */
+}
+.footer-col:nth-child(2) li {
+    margin-bottom: 22px; /* расстояние между SHOP, STYLE QUIZ и т.д. */
+}
+
+.footer-col:nth-child(2) li:first-child a::after {
+    content: "⌄";
+    font-size: 17px;
+    margin-left: 13px;
+    font-weight: 700; 
+    position: relative;
+    top: -5px;
+    color: #000000; 
+}
+
+.footer-col:nth-child(2) li:nth-child(4) a::after {
+    content: "⌄";
+    font-size: 17px;
+    margin-left: 13px;
+    font-weight: 700; 
+    position: relative;
+    top: -5px;
+    color: #000000!important;
+}
+
+
+footer,
+footer * {
+    color: #ffffff !important;
+}
+
+
+.footer-col:nth-child(3) h2 {
+    font-size: 14px;     /* делаем меньше */
+    font-weight: normal; /* убираем жирность */
+    letter-spacing: 1px; /* аккуратный межбуквенный интервал */
+    margin-bottom: 20px; /* расстояние до палочки */
+    position: relative;
+}
+.footer-col:nth-child(3) h2::after {
+    content: "";
+    display: block;
+    width: 40px;        /* длина палочки */
+    height: 2px;        /* толщина */
+    background: #ffffff;
+    margin-top: 18px;    /* расстояние от текста до палочки */
+}
+.footer-col:nth-child(3) {
+    margin-left: -86px; /* двигает колонку влево */
+    margin-top: -6px; 
+}
+.footer-col:nth-child(3) ul {
+    margin-top: 28px; /* опускает весь список ниже */
+}
+.footer-col:nth-child(3) li {
+    margin-bottom: 22px; /* расстояние между FAQS, CONTACT, TERMS, TRADE */
+}
+
+
+
+
+.footer {
+    margin-top: 115px;
+}
+
+
+
+/* ===========================
+   HOVER-эффекты меню
+   =========================== */
+
+.nav-left li,
+.nav-right li {
+    cursor: pointer;
+    /* Курсор "рука" при наведении */
+
+    transition: color 0.3s ease;
+    /* Плавное изменение цвета */
+}
+
+.nav-left li:hover,
+.nav-right li:hover {
+    color: #8a8a8a;
+    /* Цвет текста при наведении */
+}
+
+
+.hero img {
+    position: relative;
+    left: 100px;   /* двигает картинку ВЛЕВО */
+    top: 10px;     /* двигает картинку ВНИЗ */
+}
+
+
+/* ТЕКСТ НА КАРТИНКЕ */
+.hero-text {
+    position: absolute;
+    top: 84%;   /* ↓ ниже */
+    left: 60.5%;   /* ← левее */
+    transform: translateY(-50%);
+    color: white;
+}
+
+.hero-text p {
+    font-size: 21px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.hero-text h1 {
+    font-size: 44px;
+    line-height: 1.1;
+    margin-bottom: 25px;
+     white-space: nowrap;   /* ← запрещает перенос строки */
+     font-weight: 400;
+     color: #6d7352;
+}
+
+.btn {
+    padding: 14px 32px;
+    background: white;
+    color: black;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+.tiny-gap {
+    display: inline-block;
+    width: 1px; /* ← это примерно 0.8–1 мм */
+}
+/* КНОПКА — отдельное позиционирование */
+.btn {
+    position: absolute;
+    top: 111px;   /* ↑ поднимает кнопку вверх/вниз */
+    left: 286px;  /* → двигает кнопку правее */
+    
+    padding: 19px 33px;
+    background: #6d7352;   /* зелёная кнопка */
+    color: #ffffff;        /* белый текст */
+    border: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-size: 15px;
+    font-weight: 600; /* ← делает текст жирным */
+    white-space: nowrap;
+  
+
+}
+.all-collections {
+    position: absolute;
+
+    top: -23px;     /* ↑ выше */
+    left: 264px;     /* → правее */
+
+    font-size: 7px;   /* ← меньше */
+    letter-spacing: 2px;
+    font-weight: 300;
+    color: #6d7352;
+    transform: translateZ(0);
+    
+}
+
+
+.hero-text .all-collections {
+    font-size: 16px !important;
+}
+
+
+.intro {
+    max-width: 1800px;        /* ширина текста как на фото */
+    margin: 117px 0 40px 0;
+ 
+    text-align: center;      /* выравнивание по центру */
+    line-height: 1.48;        /* расстояние между строками */
+    color: #6d7352;
+         /* зелёный текст */
+    font-size: 18px;         /* как на макете */
+    font-weight: 300;
+    font-size: 55px;
+    padding-right: 8px;
+
+
+}
+
+
+.intro-links {
+    padding-left: 610px;
+    margin-top: -32px;        /* расстояние от текста до ссылок */
+    display: flex;
+    justify-content: left;; /* ссылки по центру */
+    gap: 78px;               /* расстояние между ссылками */
+}
+
+.intro-links a {
+    color: #6d7352;          /* зелёный */
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.intro-links a:hover {
+    opacity: 0.7;            /* лёгкий эффект */
+}
+.products {
+    max-width: 1200px;
+    margin: 120px auto 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 129px;
+    text-align: center;
+    margin-left: 67px;
+    margin-top: 80px
+}
+
+.product-card img {
+     width: 129%;               /* фото больше */
+    transform: translateX(-15%); /* центрируем */
+    border-radius: 1px;
+}
+
+.product-name {
+    margin-top: 23px;
+    font-size: 15px;
+    color: #000;
+    font-weight: 400;
+}
+
+.product-price {
+   display: inline-block;
+    transform:translateY(-4px) translateX(-2px); /* двигаем чуть левее */
+    margin-top: -27px;
+    font-size: 16px;
+    color: #6d7352;
+    font-weight: 500;
+}
+.products-wrapper {
+    max-width: 1300px;
+    margin: 120px auto 0;
+    padding: 60px 40px;
+    border: 1px solid #fff7d6; /* тускло-жёлтая рамка */
+    color:#fff7d6;
+    border-radius: 6px;        /* лёгкое скругление */
+    background-color: #fffdf3;
+
+}
+.collection-title {
+    font-size: 24px;
+    font-weight: 300;
+    color: #6d7352;
+    text-align: center;
+    margin-bottom: 50px;
+    margin-bottom: 40px;  /* было 60px — теперь ближе к карточкам */
+    margin-top: -23px;    /* поднимаем выше */
+}
+.product-name,
+.product-price {
+    
+    margin-left: -32px;     /* двигаем левее */
+}
+.essentials {
+    width: 100%;
+    max-width: 1330px;        /* ограничиваем ширину как в макете */
+    height: 700px;            /* высота баннера */
+    margin: 50px auto 0;     /* центрируем */
+    background-image: url("images/essentials.jpg");
+    background-size: cover;   /* фото заполняет блок */
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 0px;
+    position: relative;
+}
+
+.essentials-text {
+    position: absolute;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%); /* центрируем */
+    text-align: center;
+    color: #6d7352;
+    font-weight: 300;
+
+    width: 90%;        /* ← вот это растягивает текст */
+    max-width: 1100px; /* ← а это ограничивает, чтобы было 2 строки */
+}
+
+.essentials-text h2 {
+    font-size: 16px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    font-weight: 300;
+
+}
+
+.essentials-text p {
+    margin-top: -6px;
+    font-size: 48px;
+   line-height: 1.25;   /* расстояние между строками */
+    margin-left: 10px; /* ← сместить левее */
+       word-spacing: 1px;
+    margin-left: -46px;
+     margin-left: 0;
+     display: inline-block;          /* ← обязательно */
+    transform: translateX(-11px);   /* ← смещает ТОЛЬКО вторую часть */
+}
+.wide {
+    letter-spacing: 3px; /* ← увеличивает расстояние между буквами */
+}
+
+/* Весь блок */
+.design-story {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 78px;
+    max-width: 1330px;
+    margin: 120px auto;
+}
+
+/* Левая часть — картинка */
+.design-left img {
+    max-width: 1150px;
+    width: auto; /* вместо 100% */
+    display: block;
+}
+
+
+/* Правая часть — текст */
+.design-right {
+    max-width: 520px;
+      padding-left: 40px; /* визуально отодвигает текст */
+    
+}
+
+/* Заголовок */
+.design-right h2 {
+    font-size: 18px;
+    letter-spacing: -6px;
+    font-weight: 300;
+    color: #6d7352; 
+    margin-bottom: 25px;
+    transform: translate(12px, 24px); 
+    /* 40px вправо, 40px вниз */
+   
+}
+
+/* Текст */
+.design-right p {
+    font-size: 19px;
+    line-height: 1.7;
+    color: #6d7352;
+    font-weight: 300;
+    margin-top: 97px;
+    margin-left: 24px;
+    text-align: center;
+    
+}
+.design-left {
+    margin-left: -50px; /* смещает фото левее */
+    padding-left: 40px; 
+}
+.design-left {
+    margin-top: -1px; /* поднимает фото выше */
+}
+.design-right h2 {
+    font-size: 27px;      /* больше */
+    letter-spacing: 2px;
+    font-weight: 300;
+    color: #6d7352;
+    margin-bottom: 25px;
+     margin-top: 45px;
+    word-spacing: -7px;
+      margin-left: 70px;
+}
+
+.yellow-box {
+    border: 6px solid  #fff7d6; /* жёлтая рамка */
+    padding: 40px;             /* внутренние отступы */
+    display: flex;
+    gap: 60px;
+    width: fit-content;        
+    box-sizing: border-box;
+    position: relative;
+}
+.yellow-box {
+    width: 1900px;   /* твоя ширина */
+    height: 720px;   /* твоя высота */
+    background-color:   #fff7d6;
+margin-top: -70px
+}
+.yellow-box {
+    margin-left: -18px;
+    margin-right: -18px;
+}
+
+/* Прямоугольник вокруг секции */
+.table-box {
+   max-width: 1380px;      /* как у design-story / essentials */
+    margin: 0 auto;         /* даёт реальные отступы слева и справа */
+    padding: 60px 40px 75px;
+    box-sizing: border-box;
+ background-color:   #fff7d6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+    margin-top: -90px;
+
+}
+
+
+.table-left h2,
+.table-left p,
+.table-right img {
+    transform: none;
+}
+
+
+/* Внутренняя секция */
+.table-time {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 60px;
+}
+
+/* Левая часть — текст */
+.table-left {
+    max-width: 520px;
+}
+
+/* Заголовок */
+.table-left h2 {
+    font-size: 26px;
+    letter-spacing: 2px;
+    word-spacing: -3px;
+    font-weight: 300;
+    color: #6d7352;
+    margin-bottom: 25px;
+    transform: translate(125px, -226px); 
+    /* 40px → правее, -30px → выше */
+}
+
+/* Текст */
+.table-left p {
+    font-size: 19px;
+    line-height: 1.7;
+    color: #6d7352;
+    font-weight: 300;
+    margin-top: 20px;
+     transform: translate(96px, -180px); 
+    /* 40px → правее, -20px → выше */
+    text-align: center; 
+}
+
+/* Правая часть — картинка */
+.table-right img {
+    max-width: 900px;
+    width: 100%;
+    display: block;
+    border-radius: 6px;
+     transform: translateX(160px); /* ← двигает картинку левее */
+     
+}
+
+
+.newsletter-box {
+    max-width: 1350px;          /* ширина как у table-box */
+    margin: 120px auto 0;       /* центрируем */
+    padding: 40px 17px 50px;   /* высота прямоугольника */
+     margin-top: 40px;
+
+    background-color: #fff7d6;  /* светло-жёлтый фон */
+    border: 6px solid #fff7d6;  /* жёлтая рамка */
+    border-radius: 6px;
+
+    text-align: center;         /* центрируем текст */
+    color: #6d7352;             /* зелёный текст */
+}
+
+/* Заголовок */
+.newsletter-box h2 {
+    font-size: 28px;
+    font-weight: 300;
+    margin-bottom: 20px;
+     margin-top: 22px;
+}
+
+/* Подзаголовок */
+.newsletter-box p {
+    font-size: 17px;
+    font-weight: 300;
+    margin-bottom: 40px;
+      margin-top: 22px;
+}
+
+/* Линия + кнопка */
+.newsletter-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Линия */
+.newsletter-input .line {
+    width: 340px;
+    height: 2px;
+    background-color: #6d7352;
+      margin-top: 33px;
+}
+.newsletter-input {
+    display: flex;
+    align-items: center; /* ← ставит их по центру */
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Кнопка */
+.subscribe-btn {
+    padding: 3px 22px;
+    background-color: #6d7352;
+    color: white;
+    border: none;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    
+    display: flex;
+    align-items: center; /* ← текст по центру */
+    justify-content: center;
+     margin-top: 13px;
+}
+
+.subscribe-btn:hover {
+    opacity: 0.8;
+}
+
+
+
+
+.gallery {
+    max-width: 1350px;          /* ширина прямоугольника */
+    margin: 120px auto 0;       /* центрируем */
+    padding: 40px 30px 70px;   /* высота прямоугольника */
+    
+    background-color: #fff7d6;  /* светло-жёлтый фон */
+    border: 6px solid #fff7d6;  /* жёлтая рамка */
+    border-radius: 6px;
+
+    text-align: center;         /* заголовок по центру */
+    color: #6d7352;
+     margin-top: 40px;
+}
+
+/* Заголовок */
+.gallery h2 {
+    font-size: 24px;
+    font-weight: 300;
+    margin-bottom: 40px;
+     margin-top: 27px;
+}
+
+/* Сетка галереи */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 320px); /* 4 фото в ряд */
+    gap: 9px;
+    transform: translateX(28px); /* → смещает фото правее */
+}
+
+.gallery-grid img {
+    width: 100%;
+    height: auto;
+    border-radius: 0px;
+    object-fit: cover;
+}
