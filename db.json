@@ -398,6 +398,16 @@
       "category": "Serving",
       "rating": 4.7,
       "id": "Mg5EMZR"
+    },
+    {
+      "userId": "pNRViGa",
+      "productId": "2",
+      "name": "Maple Board – Long",
+      "price": 125,
+      "photo": "images/board-long.jpg",
+      "category": "Cutting Boards",
+      "rating": 4.9,
+      "id": "LSHqYKW"
     }
   ],
   "cart": [
@@ -448,6 +458,16 @@
       "category": "Cutting Boards",
       "quantity": 1,
       "id": "aJxpPYp"
+    },
+    {
+      "userId": "pNRViGa",
+      "productId": "1",
+      "name": "Maple Board – Short",
+      "price": 98,
+      "photo": "images/board-short.jpg",
+      "category": "Cutting Boards",
+      "quantity": 1,
+      "id": "RVDCZN1"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

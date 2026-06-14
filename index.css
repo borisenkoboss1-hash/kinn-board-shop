@@ -661,3 +661,148 @@
 .nav-left a:hover {
     color: #4caf50 !important;
 }
+
+/* ============================================================
+   10. ПОЛНАЯ АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ
+   ============================================================ */
+
+/* Все картинки по умолчанию не могут быть шире своего контейнера */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Базовый контейнер для всего контента страницы */
+.hero-slider-section, 
+.gallery-section, 
+.video-section, 
+.parallax-section, 
+.stats-section, 
+.featured-section {
+    overflow-x: hidden; /* Скрываем горизонтальную прокрутку, если она появится */
+}
+
+/* Стили для очень маленьких экранов (телефоны) */
+@media (max-width: 768px) {
+    /* Основные отступы для секций */
+    .section-title {
+        font-size: 1.6rem;
+        padding: 0 15px;
+    }
+    
+    .gallery-controls {
+        gap: 10px;
+    }
+    
+    .gallery-btn {
+        padding: 8px 12px;
+    }
+    
+    .gallery-btn-icon {
+        font-size: 1.3rem;
+    }
+    
+    .volume-control {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Видео секция */
+    .video-section {
+        padding: 40px 15px;
+    }
+    
+    .play-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 1.4rem;
+    }
+    
+    /* Параллакс секция */
+    .parallax-section {
+        height: auto;
+        min-height: 500px;
+    }
+    
+    .parallax-img-mid {
+        width: 120px !important;
+    }
+    
+    .parallax-img-front {
+        width: 80px !important;
+    }
+    
+    .parallax-content h2 {
+        font-size: 1.3rem;
+        padding: 0 15px;
+    }
+    
+    .parallax-content p {
+        font-size: 0.9rem;
+        padding: 0 15px;
+    }
+    
+    /* Секция статистики */
+    .stats-section {
+        padding: 40px 15px;
+    }
+    
+    .stats-grid {
+        gap: 15px;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+    }
+    
+    /* Секция с рекомендуемыми товарами */
+    .featured-section {
+        padding: 40px 15px;
+    }
+    
+    /* Футер (подвал) */
+    .footer {
+        margin: 40px 15px 20px;
+        padding: 30px 20px;
+    }
+    
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
+    }
+    
+    .footer-social img {
+        transform: none;
+        margin: 0 10px;
+    }
+    
+    .footer-divider {
+        margin: 15px auto;
+    }
+    
+    .footer-col:nth-child(2),
+    .footer-col:nth-child(3),
+    .footer-col:first-child {
+        margin: 0;
+    }
+    
+    .footer-col:nth-child(2) ul,
+    .footer-col:nth-child(3) ul {
+        margin-top: 20px;
+    }
+    
+    /* Карта */
+    .map-section {
+        padding: 0 15px;
+    }
+    
+    .map-section iframe {
+        height: 250px;
+    }
+}

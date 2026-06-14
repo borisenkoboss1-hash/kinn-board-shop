@@ -482,3 +482,93 @@ body {
 footer, footer * {
     color: #fff !important;
 }
+
+/* ============================================================
+   АДАПТАЦИЯ СТРАНИЦЫ КАТАЛОГА
+   ============================================================ */
+
+@media (max-width: 768px) {
+    /* Шапка на странице каталога */
+    .header {
+        padding: 15px 0;
+    }
+    
+    /* Заголовок страницы */
+    .catalog-hero {
+        margin: 40px auto 30px;
+        padding: 0 15px;
+    }
+    
+    .catalog-hero h1 {
+        font-size: 28px;
+    }
+    
+    /* Панель управления (поиск, фильтры) */
+    .controls-wrapper {
+        padding: 0 15px;
+        margin-bottom: 30px;
+    }
+    
+    .filter-sort-row {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .categories {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .sort-control {
+        width: 100%;
+        justify-content: center;
+        white-space: normal;
+    }
+    
+    /* Расширенные фильтры */
+    .advanced-filters {
+        padding: 0 15px;
+        gap: 15px;
+    }
+    
+    .filter-group input[type="number"] {
+        width: 80px;
+    }
+    
+    /* Сетка товаров */
+    .catalog-section {
+        padding: 0 15px 60px;
+    }
+    
+    .catalog-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 20px !important;
+    }
+    
+    /* Карточка товара */
+    .card-name {
+        font-size: 14px;
+    }
+    
+    .card-price {
+        font-size: 14px;
+    }
+    
+    .card-rating span {
+        font-size: 10px;
+    }
+    
+    /* Кнопки на карточке */
+    .card-actions button {
+        padding: 6px 2px;
+        font-size: 9px;
+    }
+}
+
+@media (max-width: 480px) {
+    .catalog-grid {
+        grid-template-columns: 1fr !important;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+}

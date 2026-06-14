@@ -75,29 +75,50 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLeft  = nav.querySelector('.nav-left');   // Левая часть меню (ссылки SHOP, GALLERY...)
     const navRight = nav.querySelector('.nav-right');  // Правая часть меню (иконки)
 
-    // --- ШАГ 4: СОЗДАЁМ МОБИЛЬНОЕ МЕНЮ (выезжающее) ---
+        // --- ШАГ 4: СОЗДАЁМ МОБИЛЬНОЕ МЕНЮ (выезжающее) ---
     const mobileMenu = document.createElement('div');
     mobileMenu.className = 'mobile-menu';
 
-    // Клонируем содержимое оригинальных меню в мобильное
-    // cloneNode(true) — глубокое копирование (все вложенные элементы)
-    if (navLeft)  mobileMenu.appendChild(navLeft.cloneNode(true));
-    if (navRight) mobileMenu.appendChild(navRight.cloneNode(true));
+    // Добавляем явное содержимое (ссылки)
+    mobileMenu.innerHTML = `
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 20px;"><a href="#hero-slider" style="text-decoration: none; color: #333; font-size: 16px;">SHOP</a></li>
+            <li style="margin-bottom: 20px;"><a href="#gallery-section" style="text-decoration: none; color: #333; font-size: 16px;">GALLERY</a></li>
+            <li style="margin-bottom: 20px;"><a href="#video-section" style="text-decoration: none; color: #333; font-size: 16px;">ABOUT US</a></li>
+            <li style="margin-bottom: 20px;"><a href="#parallax-section" style="text-decoration: none; color: #333; font-size: 16px;">STORIES</a></li>
+        </ul>
+        <hr style="margin: 20px 0;">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 20px;"><a href="#" id="mobileProfileLink" style="text-decoration: none; color: #333;">👤 MY PROFILE</a></li>
+            <li style="margin-bottom: 20px;"><a href="cart.html" style="text-decoration: none; color: #333;">🛒 CART</a></li>
+            <li style="margin-bottom: 20px;"><a href="favorites.html" style="text-decoration: none; color: #333;">♡ FAVORITES</a></li>
+            <li style="margin-bottom: 20px;"><a href="feedback.html" style="text-decoration: none; color: #333;">★ FEEDBACK</a></li>
+        </ul>
+    `;
 
     document.body.appendChild(mobileMenu);
 
-    // --- ШАГ 5: ФУНКЦИЯ ОТКРЫТИЯ/ЗАКРЫТИЯ МЕНЮ ---
-    function toggleMenu() {
-        // burger.classList.toggle('active') — переключает класс:
-        //   если нет - добавляет, если есть - убирает
-        // Возвращает true, если класс был добавлен (меню открылось)
-        const isOpen = burger.classList.toggle('active');
-        
-        mobileMenu.classList.toggle('active');  // Меню выезжает
-        overlay.classList.toggle('active');     // Затемнение появляется
+    // Обработчик для ссылки на профиль в мобильном меню
+    const mobileProfileLink = document.getElementById('mobileProfileLink');
+    if (mobileProfileLink) {
+        mobileProfileLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleMenu();
+            openProfileModal();
+        });
+    }
 
-        // Блокируем или разблокируем прокрутку страницы
-        document.body.style.overflow = isOpen ? 'hidden' : '';
+    // --- ШАГ 5: ФУНКЦИЯ ОТКРЫТИЯ/ЗАКРЫТИЯ МЕНЮ ---
+       function toggleMenu() {
+        burger.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+        overlay.classList.toggle('active');
+        
+        if (mobileMenu.classList.contains('active')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
     }
 
     // --- ШАГ 6: НАВЕШИВАЕМ ОБРАБОТЧИКИ ---
